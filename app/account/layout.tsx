@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { User, Package, RotateCcw, LogOut } from "lucide-react";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -27,7 +28,20 @@ const sidebarItems = [
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const { signOut } = useAuth();
+    const { user, isLoading, signOut } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && !user) {
+            router.push("/login");
+        }
+    }, [user, isLoading, router]);
+
+    if (isLoading) {
+        return <div className="flex h-screen items-center justify-center">Yükleniyor...</div>;
+    }
+
+    if (!user) return null;
 
     return (
         <div className="container mx-auto py-10 px-4">

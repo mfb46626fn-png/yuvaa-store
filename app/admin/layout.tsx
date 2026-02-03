@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
@@ -45,7 +46,26 @@ const sidebarItems = [
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
-    const { signOut } = useAuth();
+    const { user, profile, isLoading, signOut } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading) {
+            if (!user) {
+                router.push("/login");
+            } else if (profile?.role !== "admin") {
+                router.push("/");
+            }
+        }
+    }, [user, profile, isLoading, router]);
+
+    if (isLoading) {
+        return <div className="flex h-screen items-center justify-center">Yükleniyor...</div>;
+    }
+
+    if (!user || profile?.role !== "admin") {
+        return null;
+    }
 
     return (
         <div className="flex h-screen bg-muted/10">
