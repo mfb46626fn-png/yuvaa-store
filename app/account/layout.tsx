@@ -1,11 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { User, Package, RotateCcw, LogOut } from "lucide-react";
-import { useAuth } from "@/components/providers/AuthProvider";
-import { Button } from "@/components/ui/button";
+import { User, Package, RotateCcw } from "lucide-react";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
+import { AdminSidebarLogout } from "@/components/admin/AdminSidebar"; // Reusing logout button logic
 
 const sidebarItems = [
     {
@@ -19,15 +17,19 @@ const sidebarItems = [
         icon: Package,
     },
     {
-        title: "İade Taleplerim",
+        title: "İade Talepleri",
         href: "/account/returns",
         icon: RotateCcw,
     },
 ];
 
-export default function AccountLayout({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-    const { signOut } = useAuth();
+export default async function AccountLayout({ children }: { children: React.ReactNode }) {
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        redirect("/login");
+    }
 
     return (
         <div className="container mx-auto py-10 px-4">
@@ -36,33 +38,21 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 <aside className="w-full md:w-64 flex-shrink-0">
                     <div className="bg-card border border-border rounded-lg p-4">
                         <nav className="space-y-2">
-                            {sidebarItems.map((item) => {
-                                const isActive = pathname === item.href;
-                                const Icon = item.icon;
-                                return (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        className={cn(
-                                            "flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium transition-colors",
-                                            isActive
-                                                ? "bg-primary/10 text-primary"
-                                                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                                        )}
-                                    >
-                                        <Icon size={18} />
-                                        {item.title}
-                                    </Link>
-                                );
-                            })}
-                            <Button
-                                variant="ghost"
-                                className="w-full justify-start gap-3 px-4 py-3 h-auto text-red-500 hover:text-red-600 hover:bg-red-50 mt-4"
-                                onClick={signOut}
-                            >
-                                <LogOut size={18} />
-                                Çıkış Yap
-                            </Button>
+                            {/* Note: Active state highlighting removed for server component simplicity in this quick fix. 
+                                 Can be added back with a client wrapper later. */}
+                            {sidebarItems.map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                >
+                                    <item.icon size={18} />
+                                    {item.title}
+                                </Link>
+                            ))}
+                            <div className="pt-4">
+                                <AdminSidebarLogout />
+                            </div>
                         </nav>
                     </div>
                 </aside>

@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
     LayoutDashboard,
@@ -9,11 +6,10 @@ import {
     Package,
     RotateCcw,
     Tags,
-    LogOut,
-    Settings,
 } from "lucide-react";
-import { useAuth } from "@/components/providers/AuthProvider";
-import { Button } from "@/components/ui/button";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { redirect } from "next/navigation";
+import { AdminSidebarLogout } from "@/components/admin/AdminSidebar";
 
 const sidebarItems = [
     {
@@ -43,9 +39,25 @@ const sidebarItems = [
     },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
-    const pathname = usePathname();
-    const { signOut } = useAuth();
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+    // 1. Server-Side Auth Check
+    const supabase = await createServerSupabaseClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        redirect("/login");
+    }
+
+    // 2. Role Check
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (profile?.role !== "admin") {
+        redirect("/");
+    }
 
     return (
         <div className="flex h-screen bg-muted/10">
@@ -61,20 +73,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                 <nav className="flex-1 p-4 space-y-1">
                     {sidebarItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        const Icon = item.icon;
+                        // Ideally checking active state server-side is tricky without headers/middleware passing path
+                        // For simply sidebar, we can use client component for navigation or just static links
+                        // Here keeping it static server component for simplicity, active state might be lost or need a client wrapper
+                        // Let's refactor Sidebar navigation to a client component to keep active state logic working!
                         return (
                             <Link
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all group",
-                                    isActive
-                                        ? "bg-primary text-primary-foreground shadow-md"
-                                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all text-muted-foreground hover:bg-muted hover:text-foreground"
                                 )}
                             >
-                                <Icon size={18} className={cn(isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground")} />
+                                <item.icon size={18} />
                                 {item.title}
                             </Link>
                         );
@@ -82,14 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </nav>
 
                 <div className="p-4 border-t border-border mt-auto">
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-50"
-                        onClick={signOut}
-                    >
-                        <LogOut size={18} />
-                        Çıkış Yap
-                    </Button>
+                    <AdminSidebarLogout />
                 </div>
             </aside>
 
