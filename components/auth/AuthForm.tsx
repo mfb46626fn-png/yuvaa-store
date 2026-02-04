@@ -20,13 +20,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
 
-const authSchema = z.object({
-    email: z.string().email("Geçerli bir e-posta adresi giriniz"),
-    password: z.string().min(6, "Şifre en az 6 karakter olmalıdır"),
-    fullName: z.string().optional(), // Only for register
-});
-
-type AuthFormValues = z.infer<typeof authSchema>;
+import { authSchema, type AuthFormValues } from "@/lib/validations/auth";
 
 interface AuthFormProps {
     type: "login" | "register";
