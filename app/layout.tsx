@@ -24,8 +24,14 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yuvaa Store | Ev Dekorasyonu, Bohem Ürünler ve Sanat Eserleri",
-  description: "Evinize sıcaklık ve karakter katan özenle seçilmiş ev dekorasyonu, bohem ürünler ve eşsiz sanat eserleri. Warm Minimalist tasarım anlayışıyla Yuvaa Store'da.",
+  title: {
+    default: "Yuvaa Store | Bohem & Dekoratif Ev Ürünleri",
+    template: "%s | Yuvaa Store",
+  },
+  description: "Eviniz için en özel el yapımı, bohem ve dekoratif ürünler Yuvaa Store'da.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CartSheet } from "@/components/cart/CartSheet";
@@ -35,11 +36,20 @@ export function Header() {
                     <MobileNav />
                 </div>
 
+
+                // ... existing imports
+
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
-                    <span className="font-serif text-2xl font-bold tracking-tight text-primary">
-                        Yuvaa
-                    </span>
+                    <div className="relative h-10 w-32 md:h-12 md:w-40">
+                        <Image
+                            src="/logo.png"
+                            alt="Yuvaa Store Logo"
+                            fill
+                            className="object-contain object-left"
+                            priority
+                        />
+                    </div>
                 </Link>
 
                 {/* Desktop Navigation */}

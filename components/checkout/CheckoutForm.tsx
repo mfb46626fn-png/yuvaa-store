@@ -14,15 +14,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-// import { useRouter } from "next/navigation"; // Not needed for maintenance mode
+import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { checkoutSchema } from "@/lib/validations/checkout";
-import * as z from "zod";
+import { z } from "zod";
 
-// Create a schema that only validates the address fields present in this form
-// We exclude credit card fields since they are likely handled in a next step or different form
 const addressFormSchema = checkoutSchema.pick({
     firstName: true,
     lastName: true,
@@ -31,18 +29,13 @@ const addressFormSchema = checkoutSchema.pick({
     city: true,
     district: true,
     address: true,
-    // zipCode is in the main schema but maybe not in UI?  Let's check previous file content.
-    // Previous file didn't have zipCode input. I should probably add it or make it optional/omit.
-    // The previous file schema didn't have zipCode. The new lib schema has it.
-    // To match UI exactly, I'll omit zipCode for now or better, I will ADD the zipCode input to the UI
-    // to strictly follow the "use Zod Schema" instruction which mandates it.
     zipCode: true
 });
 
 type CheckoutFormValues = z.infer<typeof addressFormSchema>;
 
 export function CheckoutForm() {
-    // const router = useRouter();
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const cart = useCart();
 
@@ -68,22 +61,39 @@ export function CheckoutForm() {
 
         setIsLoading(true);
 
-        // Simulate a small delay for better UX
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        try {
+            // Call our Backend API
+            const response = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...data,
+                    items: cart.items,
+                }),
+            });
 
-        // MAINTENANCE MODE LOGIC
-        // Instead of backend call, we show this warning
-        toast.warning("Ödeme altyapısı şu an bakım aşamasındadır. Lütfen daha sonra tekrar deneyiniz.", {
-            duration: 5000, // Show for 5 seconds
-            action: {
-                label: "Tamam",
-                onClick: () => console.log("User acknowledged"),
-            },
-        });
+            const result = await response.json();
 
-        setIsLoading(false);
-        // Do NOT clear cart
-        // Do NOT redirect
+            if (!response.ok) {
+                throw new Error(result.message || "Ödeme başlatılamadı.");
+            }
+
+            if (result.status === "success" && result.iframe_token) {
+                // Redirect to Payment Page with Token
+                // We use localStorage or URL query. URL query is stateless and fine for token.
+                // Or better, we can just use the token in the next page.
+                // Wait, PayTR iframe token is sensitive? Not really, it's just for that session.
+                router.push(`/checkout/payment?token=${result.iframe_token}`);
+            } else {
+                throw new Error("PayTR token alınamadı.");
+            }
+
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error.message || "Bir hata oluştu.");
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -211,10 +221,10 @@ export function CheckoutForm() {
                     {isLoading ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Kontrol Ediliyor...
+                            İşleniyor...
                         </>
                     ) : (
-                        "Ödemeye Geç"
+                        "Ödeme Ekranına Git"
                     )}
                 </Button>
             </form>
