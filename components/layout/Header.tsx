@@ -36,9 +36,6 @@ export function Header() {
                     <MobileNav />
                 </div>
 
-
-                // ... existing imports
-
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
                     <div className="relative h-10 w-32 md:h-12 md:w-40">
