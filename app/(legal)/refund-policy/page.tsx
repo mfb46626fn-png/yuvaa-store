@@ -18,7 +18,7 @@ export default function RefundPolicyPage() {
                     <ul className="list-disc pl-5 space-y-2">
                         <li>İade etmek istediğiniz ürün, kullanılmamış, hasar görmemiş ve orijinal ambalajında olmalıdır.</li>
                         <li>Faturanızın aslını ürünle birlikte göndermeniz gerekmektedir.</li>
-                        <li>Sitemizdeki "Hesabım > Siparişlerim" bölümünden iade talebi oluşturun.</li>
+                        <li>Sitemizdeki "Hesabım &gt; Siparişlerim" bölümünden iade talebi oluşturun.</li>
                         <li>Size verilecek kargo kodu ile ürünü anlaşmalı olduğumuz kargo firmasına ücretsiz teslim edebilirsiniz.</li>
                     </ul>
 
