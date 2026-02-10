@@ -49,13 +49,19 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     }
 
     // 2. Role Check (Security: Only admins allowed)
-    const { data: profile } = await supabase
+    const { data: profile, error } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single();
 
-    if (profile?.role !== "admin") {
+    if (error || !profile) {
+        console.error("Admin Access Denied: Profile not found or error", { userId: user.id, error });
+        redirect("/");
+    }
+
+    if (profile.role !== "admin") {
+        console.warn("Admin Access Denied: User is not admin", { userId: user.id, role: profile.role });
         redirect("/");
     }
 
