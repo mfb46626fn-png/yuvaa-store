@@ -6,6 +6,7 @@ import {
     Package,
     RotateCcw,
     Tags,
+    Settings,
 } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
@@ -36,6 +37,11 @@ const sidebarItems = [
         title: "İade Talepleri",
         href: "/admin/returns",
         icon: RotateCcw,
+    },
+    {
+        title: "Site Ayarları",
+        href: "/admin/settings",
+        icon: Settings,
     },
 ];
 

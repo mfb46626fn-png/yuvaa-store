@@ -26,8 +26,7 @@ export default function AdminDashboard() {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                // 1. Total Sales (Sum of totals from orders)
-                // Note: For large DBs, use aggregation function or separate stats table.
+                // 1. Total Sales
                 const { data: salesData } = await supabase
                     .from("orders")
                     .select("total");
@@ -38,9 +37,9 @@ export default function AdminDashboard() {
                 const { count: pendingOrders } = await supabase
                     .from("orders")
                     .select("*", { count: "exact", head: true })
-                    .eq("status", "pending"); // Assuming 'processing' or 'pending'
+                    .eq("status", "pending");
 
-                // 3. Low Stock (inventory < 5)
+                // 3. Low Stock
                 const { count: lowStock } = await supabase
                     .from("products")
                     .select("*", { count: "exact", head: true })
@@ -53,7 +52,7 @@ export default function AdminDashboard() {
                     .eq("status", "pending");
 
                 setStats({
-                    totalSales,
+                    totalSales: totalSales,
                     pendingOrders: pendingOrders || 0,
                     lowStockProducts: lowStock || 0,
                     pendingReturns: pendingReturns || 0,

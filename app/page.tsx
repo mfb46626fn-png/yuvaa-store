@@ -1,11 +1,25 @@
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoryList } from "@/components/home/CategoryList";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
-export default function Home() {
+export const revalidate = 60; // Revalidate dynamic content every 60 seconds
+
+export default async function Home() {
+    const supabase = await createServerSupabaseClient();
+    const { data: settings } = await supabase
+        .from("site_settings")
+        .select("*")
+        .single();
+
     return (
         <div className="flex flex-col min-h-screen">
-            <HeroSection />
+            <HeroSection
+                title={settings?.hero_title}
+                description={settings?.hero_description}
+                buttonText={settings?.hero_button_text}
+                imageUrl={settings?.hero_image_url}
+            />
 
             <div className="flex-1 bg-background">
                 {/* Categories - Visual heavy distinct section */}
@@ -18,8 +32,6 @@ export default function Home() {
                 {/* Featured Products */}
                 <FeaturedProducts />
             </div>
-
-
         </div>
     );
 }
