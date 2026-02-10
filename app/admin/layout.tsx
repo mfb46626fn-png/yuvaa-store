@@ -48,7 +48,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         redirect("/login");
     }
 
-    // 2. Role Check
+    // 2. Role Check (Security: Only admins allowed)
     const { data: profile } = await supabase
         .from("profiles")
         .select("role")
