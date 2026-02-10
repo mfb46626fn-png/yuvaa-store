@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import { AdminSidebarLogout } from "@/components/admin/AdminSidebar";
 
 const sidebarItems = [
@@ -46,29 +47,40 @@ const sidebarItems = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-    // 1. Server-Side Auth Check
-    const supabase = await createServerSupabaseClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+        // 1. Server-Side Auth Check
+        const supabase = await createServerSupabaseClient();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (!user) {
-        redirect("/login");
-    }
+        if (authError || !user) {
+            redirect("/login");
+        }
 
-    // 2. Role Check (Security: Only admins allowed)
-    const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
+        // 2. Role Check (Security: Only admins allowed)
+        const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single();
 
-    if (error || !profile) {
-        console.error("Admin Access Denied: Profile not found or error", { userId: user.id, error });
-        redirect("/");
-    }
+        if (profileError) {
+            console.error("Admin Policy Error:", profileError);
+            // If profile is missing, it might be a valid user without a profile row.
+            // We should ideally redirect or show error, but not crash.
+            redirect("/");
+        }
 
-    if (profile.role !== "admin") {
-        console.warn("Admin Access Denied: User is not admin", { userId: user.id, role: profile.role });
-        redirect("/");
+        if (!profile || profile.role !== "admin") {
+            console.warn("Admin Access Denied:", { userId: user.id, role: profile?.role });
+            redirect("/");
+        }
+    } catch (error) {
+        // Next.js Redirects throw errors that must be re-thrown
+        if (isRedirectError(error)) {
+            throw error;
+        }
+        console.error("Admin Layout Critical Error:", error);
+        throw error; // Let error.tsx handle it or shows 500 if mostly handled
     }
 
     return (
