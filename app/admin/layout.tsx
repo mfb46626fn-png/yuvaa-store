@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
-import { isRedirectError } from "next/dist/client/components/redirect";
 import { AdminSidebarLogout } from "@/components/admin/AdminSidebar";
+import { AdminMobileNav } from "@/components/admin/AdminMobileNav";
 
 const sidebarItems = [
     {
@@ -46,6 +46,10 @@ const sidebarItems = [
     },
 ];
 
+function isRedirectError(error: any) {
+    return error?.digest?.startsWith?.('NEXT_REDIRECT');
+}
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
     try {
         // 1. Server-Side Auth Check
@@ -66,7 +70,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         if (profileError) {
             console.error("Admin Policy Error:", profileError);
             // If profile is missing, it might be a valid user without a profile row.
-            // We should ideally redirect or show error, but not crash.
             redirect("/");
         }
 
@@ -80,7 +83,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             throw error;
         }
         console.error("Admin Layout Critical Error:", error);
-        throw error; // Let error.tsx handle it or shows 500 if mostly handled
+        throw error;
     }
 
     return (
@@ -97,10 +100,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
                 <nav className="flex-1 p-4 space-y-1">
                     {sidebarItems.map((item) => {
-                        // Ideally checking active state server-side is tricky without headers/middleware passing path
-                        // For simply sidebar, we can use client component for navigation or just static links
-                        // Here keeping it static server component for simplicity, active state might be lost or need a client wrapper
-                        // Let's refactor Sidebar navigation to a client component to keep active state logic working!
                         return (
                             <Link
                                 key={item.href}
@@ -120,12 +119,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <AdminSidebarLogout />
                 </div>
             </aside>
-
-            import {AdminMobileNav} from "@/components/admin/AdminMobileNav";
-
-            // ... imports
-
-            // ... existing code
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto flex flex-col">
