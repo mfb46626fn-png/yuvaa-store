@@ -19,6 +19,21 @@ const nextConfig: NextConfig = {
 
   experimental: {
     // Ensure we are not using anything that conflicts with Vercel
+  },
+
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ckridnftlitmzhxswvse.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      }
+    ],
   }
 };
 
