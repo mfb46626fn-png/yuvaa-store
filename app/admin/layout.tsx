@@ -103,9 +103,25 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 </div>
             </aside>
 
+            import {AdminMobileNav} from "@/components/admin/AdminMobileNav";
+
+            // ... imports
+
+            // ... existing code
+
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto">
-                <div className="p-8">
+            <main className="flex-1 overflow-y-auto flex flex-col">
+                {/* Mobile Header */}
+                <div className="md:hidden border-b border-border bg-card p-4 flex items-center justify-between sticky top-0 z-10">
+                    <div className="flex items-center gap-4">
+                        <AdminMobileNav />
+                        <span className="font-serif text-lg font-bold text-foreground">
+                            Yönetim Paneli
+                        </span>
+                    </div>
+                </div>
+
+                <div className="p-4 md:p-8 flex-1">
                     {children}
                 </div>
             </main>
