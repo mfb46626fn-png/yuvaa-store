@@ -11,7 +11,8 @@ import {
     Package,
     RotateCcw,
     Tags,
-    LogOut
+    LogOut,
+    Settings
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -41,6 +42,11 @@ const sidebarItems = [
         title: "İade Talepleri",
         href: "/admin/returns",
         icon: RotateCcw,
+    },
+    {
+        title: "Site Ayarları",
+        href: "/admin/settings",
+        icon: Settings,
     },
 ];
 
