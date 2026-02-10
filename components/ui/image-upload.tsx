@@ -48,15 +48,24 @@ export function ImageUpload({
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
             const filePath = `${fileName}`;
 
-            const { error: uploadError } = await supabase.storage
+            console.log("Starting upload...", { bucketName, filePath, fileSize: file.size });
+
+            const { data, error: uploadError } = await supabase.storage
                 .from(bucketName)
                 .upload(filePath, file);
 
-            if (uploadError) throw uploadError;
+            if (uploadError) {
+                console.error("Supabase Upload Error:", uploadError);
+                throw uploadError;
+            }
+
+            console.log("Upload successful:", data);
 
             const { data: { publicUrl } } = supabase.storage
                 .from(bucketName)
                 .getPublicUrl(filePath);
+
+            console.log("Public URL:", publicUrl);
 
             onChange(publicUrl);
             toast.success("Resim yüklendi.");

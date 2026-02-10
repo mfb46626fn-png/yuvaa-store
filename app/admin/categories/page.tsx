@@ -98,22 +98,37 @@ export default function AdminCategoriesPage() {
 
         setIsSubmitting(true);
         try {
+            const payload = {
+                ...newCategory,
+                image_url: newCategory.image_url || null, // Convert empty string to null
+                description: newCategory.description || null
+            };
+
+            console.log("Submitting category:", payload);
+
             const { data, error } = await supabase
                 .from("categories")
-                .insert([newCategory])
+                .insert([payload])
                 .select()
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error("Supabase Insert Error:", error);
+                throw error;
+            }
 
             setCategories([data, ...categories]);
             toast.success("Kategori oluşturuldu.");
             setIsDialogOpen(false);
             setNewCategory({ title: "", slug: "", image_url: "", description: "" });
-        } catch (error) {
-            console.error(error);
-            toast.error("Oluşturma başarısız. Slug benzersiz olmalı.");
-        } finally {
+        } catch (error: any) {
+            console.error("Create error:", error);
+            // Check for specific Supabase unique violation code (23505)
+            if (error?.code === '23505') {
+                toast.error("Bu başlık veya slug zaten kullanılıyor.");
+            } else {
+                toast.error(`Oluşturma başarısız: ${error?.message || "Bilinmeyen hata"}`);
+            }
             setIsSubmitting(false);
         }
     };
