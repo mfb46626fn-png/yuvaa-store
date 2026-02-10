@@ -24,6 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { ImageUpload } from "@/components/ui/image-upload";
 
 type Category = {
     id: string;
@@ -152,12 +153,13 @@ export default function AdminCategoriesPage() {
                                 />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="image">Görsel URL</Label>
-                                <Input
-                                    id="image"
+                                <Label>Görsel</Label>
+                                <ImageUpload
                                     value={newCategory.image_url}
-                                    onChange={(e) => setNewCategory({ ...newCategory, image_url: e.target.value })}
-                                    placeholder="https://..."
+                                    onChange={(url) => setNewCategory({ ...newCategory, image_url: url })}
+                                    onRemove={() => setNewCategory({ ...newCategory, image_url: "" })}
+                                    bucketName="categories"
+                                    disabled={isSubmitting}
                                 />
                             </div>
                         </div>
