@@ -6,11 +6,20 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 export const revalidate = 60; // Revalidate dynamic content every 60 seconds
 
 export default async function Home() {
-    const supabase = await createServerSupabaseClient();
-    const { data: settings } = await supabase
-        .from("site_settings")
-        .select("*")
-        .single();
+    const supabase = createServerSupabaseClient();
+
+    let settings = null;
+    try {
+        const client = await supabase;
+        const { data } = await client
+            .from("site_settings")
+            .select("*")
+            .single();
+        settings = data;
+    } catch (error) {
+        console.error("Site settings fetch error (Table might be missing):", error);
+        // Fallback to null (uses default props in HeroSection)
+    }
 
     return (
         <div className="flex flex-col min-h-screen">
