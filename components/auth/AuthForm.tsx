@@ -37,6 +37,7 @@ export function AuthForm({ type }: AuthFormProps) {
             email: "",
             password: "",
             fullName: "",
+            phone: "",
         },
     });
 
@@ -63,6 +64,10 @@ export function AuthForm({ type }: AuthFormProps) {
                     form.setError("fullName", { message: "Ad Soyad gereklidir" });
                     return;
                 }
+                if (!data.phone) {
+                    form.setError("phone", { message: "Telefon numarası gereklidir" });
+                    return;
+                }
 
                 const { error } = await supabase.auth.signUp({
                     email: data.email,
@@ -70,6 +75,7 @@ export function AuthForm({ type }: AuthFormProps) {
                     options: {
                         data: {
                             full_name: data.fullName,
+                            phone: data.phone,
                         },
                     },
                 });
@@ -121,6 +127,22 @@ export function AuthForm({ type }: AuthFormProps) {
                                     <FormLabel>Ad Soyad</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Adınız Soyadınız" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
+
+                    {type === "register" && (
+                        <FormField
+                            control={form.control}
+                            name="phone"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Telefon Numarası</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="05XXXXXXXXX" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
