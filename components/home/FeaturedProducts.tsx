@@ -18,10 +18,7 @@ async function getFeaturedProducts() {
             sale_price,
             images,
             slug,
-            categories (
-                name,
-                slug
-            )
+            category
         `)
         .order('created_at', { ascending: false })
         .limit(4);
@@ -39,7 +36,12 @@ export async function FeaturedProducts() {
     // Transform data to match Product interface
     const formattedProducts = products.map(p => ({
         ...p,
-        category: p.categories ? Array.isArray(p.categories) ? p.categories[0] : p.categories : undefined
+        // ProductCard expects a category object or string? We'll see. 
+        // If it expects object {name, slug}, we construct it from static data.
+        category: {
+            name: p.category, // We will map this properly if needed
+            slug: p.category
+        }
     }));
 
     return (

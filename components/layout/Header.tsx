@@ -30,15 +30,30 @@ export function Header() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4">
+            <div className="container mx-auto flex h-16 items-center justify-between px-4 relative">
                 {/* Mobile Menu */}
                 <div className="flex items-center md:hidden">
                     <MobileNav />
                 </div>
 
-                {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="relative h-10 w-32 md:h-12 md:w-40">
+                {/* Mobile Logo (Absolute Centered) */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none md:hidden">
+                    <Link href="/" className="pointer-events-auto">
+                        <div className="relative h-8 w-28">
+                            <Image
+                                src="/logo.png"
+                                alt="Yuvaa Store"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
+                    </Link>
+                </div>
+
+                {/* Desktop Logo (Static) */}
+                <Link href="/" className="hidden md:flex items-center gap-2">
+                    <div className="relative h-12 w-40">
                         <Image
                             src="/logo.png"
                             alt="Yuvaa Store Logo"
@@ -51,12 +66,6 @@ export function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-8">
-                    <Link href="/" className="text-sm font-medium hover:text-primary transition-colors">
-                        Anasayfa
-                    </Link>
-                    <Link href="/products" className="text-sm font-medium hover:text-primary transition-colors">
-                        Tüm Koleksiyon
-                    </Link>
                     <Link href="/categories" className="text-sm font-medium hover:text-primary transition-colors">
                         Kategoriler
                     </Link>

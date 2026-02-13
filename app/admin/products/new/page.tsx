@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState } from "react";
+import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
-import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
     Select,
     SelectContent,
@@ -17,337 +14,267 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-
-import { ImageDropzone } from "@/components/admin/ImageDropzone";
-import { createProduct, getCategories, type Category } from "../actions";
-
-interface FormErrors {
-    title?: string;
-    price?: string;
-    stock_quantity?: string;
-}
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { toast } from "sonner";
+import { ArrowLeft, Loader2, Save } from "lucide-react";
+import Link from "next/link";
+import { CATEGORIES } from "@/lib/constants";
+import { ImageUpload } from "@/components/ui/image-upload";
+import { Switch } from "@/components/ui/switch";
 
 export default function NewProductPage() {
     const router = useRouter();
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [images, setImages] = useState<string[]>([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [formErrors, setFormErrors] = useState<FormErrors>({});
+    const supabase = createClient();
+    const [isLoading, setIsLoading] = useState(false);
 
-    // Form state
-    const [title, setTitle] = useState("");
-    const [description, setDescription] = useState("");
-    const [price, setPrice] = useState("");
-    const [salePrice, setSalePrice] = useState("");
-    const [stockQuantity, setStockQuantity] = useState("0");
-    const [categoryId, setCategoryId] = useState<string>("");
-    const [material, setMaterial] = useState("");
-    const [dimensions, setDimensions] = useState("");
-    const [isPersonalized, setIsPersonalized] = useState(false);
+    const [formData, setFormData] = useState({
+        title: "",
+        slug: "",
+        description: "",
+        price: "",
+        inventory: "",
+        category: "",
+        images: [] as string[],
+        is_personalized: false
+    });
 
-    useEffect(() => {
-        async function loadCategories() {
-            const cats = await getCategories();
-            setCategories(cats);
-        }
-        loadCategories();
-    }, []);
+    const handleSlugGeneration = (title: string) => {
+        const slug = title
+            .toLowerCase()
+            .replace(/ğ/g, "g")
+            .replace(/ü/g, "u")
+            .replace(/ş/g, "s")
+            .replace(/ı/g, "i")
+            .replace(/ö/g, "o")
+            .replace(/ç/g, "c")
+            .replace(/[^a-z0-9\s-]/g, "")
+            .replace(/\s+/g, "-");
+        setFormData(prev => ({ ...prev, title, slug }));
+    };
 
-    function validateForm(): boolean {
-        const errors: FormErrors = {};
+    const handleImageUpload = (url: string) => {
+        setFormData(prev => ({ ...prev, images: [...prev.images, url] }));
+    };
 
-        if (title.length < 3) {
-            errors.title = "Ürün adı en az 3 karakter olmalıdır";
-        }
+    const handleRemoveImage = (indexToRemove: number) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, index) => index !== indexToRemove)
+        }));
+    };
 
-        if (!price || isNaN(Number(price)) || Number(price) <= 0) {
-            errors.price = "Fiyat 0'dan büyük olmalıdır";
-        }
-
-        if (isNaN(Number(stockQuantity)) || Number(stockQuantity) < 0) {
-            errors.stock_quantity = "Stok negatif olamaz";
-        }
-
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
-    }
-
-    async function handleSubmit(e: FormEvent) {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!validateForm()) return;
-
-        setIsSubmitting(true);
-        setError(null);
+        setIsLoading(true);
 
         try {
-            const result = await createProduct({
-                title,
-                description,
-                price: Number(price),
-                sale_price: salePrice ? Number(salePrice) : null,
-                stock_quantity: Number(stockQuantity),
-                category_id: categoryId || null,
-                images,
-                material,
-                dimensions,
-                is_personalized: isPersonalized,
-            });
-
-            if (result.success) {
-                router.push("/admin/products");
-            } else {
-                setError(result.error || "Ürün oluşturulurken bir hata oluştu");
+            if (!formData.title || !formData.price || !formData.images.length) {
+                toast.error("Lütfen zorunlu alanları doldurun (Başlık, Fiyat, Görsel).");
+                return;
             }
-        } catch {
-            setError("Beklenmeyen bir hata oluştu");
+
+            const { data, error } = await supabase.from("products").insert([
+                {
+                    title: formData.title,
+                    slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, "-"),
+                    description: formData.description,
+                    price: parseFloat(formData.price),
+                    inventory: parseInt(formData.inventory) || 0,
+                    category: formData.category, // Storing static slug
+                    images: formData.images,
+                    is_personalized: formData.is_personalized
+                },
+            ]).select();
+
+            if (error) throw error;
+
+            toast.success("Ürün başarıyla oluşturuldu.");
+            router.push("/admin/products");
+            router.refresh();
+        } catch (error: any) {
+            console.error("Create error:", error);
+            toast.error(`Hata: ${error.message}`);
         } finally {
-            setIsSubmitting(false);
+            setIsLoading(false);
         }
-    }
+    };
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
+        <div className="space-y-6 max-w-4xl mx-auto pb-10 px-4">
             <div className="flex items-center gap-4">
                 <Link href="/admin/products">
                     <Button variant="ghost" size="icon">
-                        <ArrowLeft className="h-5 w-5" />
+                        <ArrowLeft className="h-4 w-4" />
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="font-serif text-2xl font-bold text-foreground">
-                        Yeni Ürün Ekle
-                    </h1>
-                    <p className="text-sm text-muted-foreground">
-                        Mağazanıza yeni bir ürün ekleyin
-                    </p>
+                    <h1 className="text-3xl font-bold tracking-tight">Yeni Ürün Ekle</h1>
+                    <p className="text-muted-foreground">Kataloğunuza yeni bir ürün ekleyin.</p>
                 </div>
             </div>
 
-            {/* Error message */}
-            {error && (
-                <div className="rounded-lg bg-destructive/10 p-4 text-sm text-destructive">
-                    {error}
-                </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid gap-6 lg:grid-cols-3">
-                    {/* Main content - 2 columns */}
-                    <div className="space-y-6 lg:col-span-2">
-                        {/* Basic Info */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Ürün Bilgileri</CardTitle>
-                                <CardDescription>
-                                    Temel ürün bilgilerini girin
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="title">Ürün Adı *</Label>
-                                    <Input
-                                        id="title"
-                                        placeholder="Örn: El Yapımı Makrome Duvar Süsü"
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                    />
-                                    {formErrors.title && (
-                                        <p className="text-sm text-destructive">{formErrors.title}</p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="description">Açıklama</Label>
-                                    <Textarea
-                                        id="description"
-                                        placeholder="Ürün hakkında detaylı bilgi..."
-                                        className="min-h-[120px] resize-y"
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
-                                    />
-                                </div>
-
-                                <div className="grid gap-4 sm:grid-cols-2">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="material">Malzeme</Label>
-                                        <Input
-                                            id="material"
-                                            placeholder="Örn: Pamuk, Ahşap, Seramik"
-                                            value={material}
-                                            onChange={(e) => setMaterial(e.target.value)}
-                                        />
-                                        <p className="text-xs text-muted-foreground">
-                                            Ürünün yapıldığı malzeme
-                                        </p>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="dimensions">Boyutlar</Label>
-                                        <Input
-                                            id="dimensions"
-                                            placeholder="Örn: 30x40 cm"
-                                            value={dimensions}
-                                            onChange={(e) => setDimensions(e.target.value)}
-                                        />
-                                        <p className="text-xs text-muted-foreground">
-                                            Ürün boyutları (en x boy x yükseklik)
-                                        </p>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Images */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Ürün Görselleri</CardTitle>
-                                <CardDescription>
-                                    Ürünün görsellerini yükleyin. İlk görsel ana görsel olarak kullanılır.
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <ImageDropzone
-                                    onImagesChange={setImages}
-                                    existingImages={images}
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Left Column: Main Info */}
+                <div className="md:col-span-2 space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Ürün Detayları</CardTitle>
+                            <CardDescription>Temel ürün bilgileri.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="title">Ürün Başlığı *</Label>
+                                <Input
+                                    id="title"
+                                    placeholder="Örn: El Yapımı Seramik Vazo"
+                                    value={formData.title}
+                                    onChange={(e) => handleSlugGeneration(e.target.value)}
+                                    required
                                 />
-                            </CardContent>
-                        </Card>
-                    </div>
+                            </div>
 
-                    {/* Sidebar - 1 column */}
-                    <div className="space-y-6">
-                        {/* Pricing & Stock */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Fiyat & Stok</CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="price">Fiyat (₺) *</Label>
-                                    <Input
-                                        id="price"
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        placeholder="0.00"
-                                        value={price}
-                                        onChange={(e) => setPrice(e.target.value)}
+                            <div className="space-y-2">
+                                <Label htmlFor="slug">URL Bağlantısı (Slug)</Label>
+                                <Input
+                                    id="slug"
+                                    value={formData.slug}
+                                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Açıklama</Label>
+                                <Textarea
+                                    id="description"
+                                    placeholder="Ürün hikayesi ve detayları..."
+                                    className="min-h-[150px]"
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Medya</CardTitle>
+                            <CardDescription>Ürün görsellerini yükleyin (En az 1 adet). *</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                {/* Main Uploader */}
+                                <div className="grid gap-4">
+                                    <ImageUpload
+                                        value=""
+                                        onChange={handleImageUpload}
+                                        onRemove={() => { }}
+                                        bucketName="products"
                                     />
-                                    {formErrors.price && (
-                                        <p className="text-sm text-destructive">{formErrors.price}</p>
-                                    )}
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="sale_price">İndirimli Fiyat (₺)</Label>
-                                    <Input
-                                        id="sale_price"
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        placeholder="0.00"
-                                        value={salePrice}
-                                        onChange={(e) => setSalePrice(e.target.value)}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        Boş bırakırsanız indirim uygulanmaz
-                                    </p>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <Label htmlFor="stock">Stok Miktarı *</Label>
-                                    <Input
-                                        id="stock"
-                                        type="number"
-                                        min="0"
-                                        placeholder="0"
-                                        value={stockQuantity}
-                                        onChange={(e) => setStockQuantity(e.target.value)}
-                                    />
-                                    {formErrors.stock_quantity && (
-                                        <p className="text-sm text-destructive">{formErrors.stock_quantity}</p>
-                                    )}
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Category */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Kategori</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="space-y-2">
-                                    <Label>Kategori Seçin</Label>
-                                    <Select
-                                        value={categoryId}
-                                        onValueChange={setCategoryId}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Kategori seçin..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((category) => (
-                                                <SelectItem key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        {/* Personalization */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Kişiselleştirme</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="flex items-center justify-between rounded-lg border border-border p-4">
-                                    <div className="space-y-0.5">
-                                        <Label className="text-base">
-                                            Kişiselleştirilebilir
-                                        </Label>
-                                        <p className="text-sm text-muted-foreground">
-                                            Bu ürün müşteri isteğiyle özelleştirilebilir
-                                        </p>
+                                {/* Preview Grid */}
+                                {formData.images.length > 0 && (
+                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mt-4">
+                                        {formData.images.map((img, index) => (
+                                            <div key={index} className="relative aspect-square group rounded-lg overflow-hidden border bg-muted">
+                                                <img
+                                                    src={img}
+                                                    alt={`Upload ${index}`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleRemoveImage(index)}
+                                                    className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+                                                </button>
+                                                {index === 0 && (
+                                                    <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-1">
+                                                        Ana Görsel
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
-                                    <Switch
-                                        checked={isPersonalized}
-                                        onCheckedChange={setIsPersonalized}
-                                    />
-                                </div>
-                            </CardContent>
-                        </Card>
+                                )}
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
 
-                        {/* Submit */}
-                        <Button
-                            type="submit"
-                            className="w-full"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? (
-                                <>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Kaydediliyor...
-                                </>
-                            ) : (
-                                <>
-                                    <Save className="mr-2 h-4 w-4" />
-                                    Ürünü Kaydet
-                                </>
-                            )}
+                {/* Right Column: Settings */}
+                <div className="space-y-6 w-full max-w-full overflow-hidden">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Kategori & Stok</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>Kategori</Label>
+                                <Select
+                                    value={formData.category}
+                                    onValueChange={(val) => setFormData({ ...formData, category: val })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Kategori Seç" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {CATEGORIES.map((cat) => (
+                                            <SelectItem key={cat.slug} value={cat.slug}>
+                                                {cat.title}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="price">Fiyat (₺) *</Label>
+                                <Input
+                                    id="price"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0.00"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="inventory">Stok Adedi</Label>
+                                <Input
+                                    id="inventory"
+                                    type="number"
+                                    min="0"
+                                    placeholder="0"
+                                    value={formData.inventory}
+                                    onChange={(e) => setFormData({ ...formData, inventory: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between rounded-lg border p-3">
+                                <div className="space-y-0.5">
+                                    <Label className="text-base">Kişiselleştirme</Label>
+                                    <p className="text-xs text-muted-foreground">Müşteri notu?</p>
+                                </div>
+                                <Switch
+                                    checked={formData.is_personalized}
+                                    onCheckedChange={(checked) => setFormData({ ...formData, is_personalized: checked })}
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Button type="button" variant="outline" className="w-full" onClick={() => router.back()}>
+                            İptal
+                        </Button>
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {isLoading ? "Kaydediliyor..." : "Ürünü Yayınla"}
                         </Button>
                     </div>
                 </div>

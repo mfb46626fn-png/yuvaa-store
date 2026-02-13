@@ -1,33 +1,18 @@
 import { HeroSection } from "@/components/home/HeroSection";
 import { CategoryList } from "@/components/home/CategoryList";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { SITE_CONFIG } from "@/lib/constants";
 
-export const revalidate = 60; // Revalidate dynamic content every 60 seconds
+export const revalidate = 60;
 
-export default async function Home() {
-    const supabase = createServerSupabaseClient();
-
-    let settings = null;
-    try {
-        const client = await supabase;
-        const { data } = await client
-            .from("site_settings")
-            .select("*")
-            .single();
-        settings = data;
-    } catch (error) {
-        console.error("Site settings fetch error (Table might be missing):", error);
-        // Fallback to null (uses default props in HeroSection)
-    }
-
+export default function Home() {
     return (
         <div className="flex flex-col min-h-screen">
             <HeroSection
-                title={settings?.hero_title}
-                description={settings?.hero_description}
-                buttonText={settings?.hero_button_text}
-                imageUrl={settings?.hero_image_url}
+                title={SITE_CONFIG.hero.title}
+                description={SITE_CONFIG.hero.description}
+                buttonText={SITE_CONFIG.hero.buttonText}
+                imageUrl={SITE_CONFIG.hero.imageUrl}
             />
 
             <div className="flex-1 bg-background">

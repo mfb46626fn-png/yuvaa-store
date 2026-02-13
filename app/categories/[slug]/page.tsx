@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
+import { CATEGORIES, getCategoryTitle } from "@/lib/constants";
 
 interface PageProps {
     params: Promise<{
@@ -11,13 +12,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    const supabase = await createServerSupabaseClient();
-
-    const { data: category } = await supabase
-        .from("categories")
-        .select("name")
-        .eq("slug", slug)
-        .single();
+    const category = CATEGORIES.find(c => c.slug === slug);
 
     if (!category) {
         return {
@@ -26,8 +21,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     return {
-        title: `${category.name} | Yuvaa Store`,
-        description: `${category.name} kategorisindeki benzersiz ürünleri keşfedin.`,
+        title: `${category.title} | Yuvaa Store`,
+        description: `${category.title} kategorisindeki benzersiz ürünleri keşfedin.`,
     };
 }
 
@@ -35,38 +30,27 @@ export default async function CategoryPage({ params }: PageProps) {
     const { slug } = await params;
     const supabase = await createServerSupabaseClient();
 
-    // 1. Get Category ID
-    const { data: category } = await supabase
-        .from("categories")
-        .select("id, name, slug")
-        .eq("slug", slug)
-        .single();
+    // 1. Get Category from Static Data
+    const category = CATEGORIES.find(c => c.slug === slug);
 
     if (!category) {
         notFound();
     }
 
-    // 2. Get Products by Category ID
+    // 2. Get Products by Category Slug (Text column)
     const { data: products } = await supabase
         .from("products")
-        .select(`
-            *,
-            categories (
-                name,
-                slug
-            )
-        `)
-        .eq("category_id", category.id)
+        .select("*")
+        .eq("category", slug) // Match against text column
         .order("created_at", { ascending: false });
 
     // Format products for ProductCard
     const formattedProducts = (products || []).map(p => ({
         ...p,
-        categories: p.categories
-            ? Array.isArray(p.categories)
-                ? p.categories[0]
-                : p.categories
-            : null
+        category: {
+            name: category.title,
+            slug: category.slug
+        }
     }));
 
     return (
@@ -78,7 +62,7 @@ export default async function CategoryPage({ params }: PageProps) {
                         Koleksiyon
                     </span>
                     <h1 className="mt-2 font-serif text-4xl font-medium text-foreground md:text-5xl">
-                        {category.name}
+                        {category.title}
                     </h1>
                 </div>
 
@@ -88,7 +72,6 @@ export default async function CategoryPage({ params }: PageProps) {
                         {formattedProducts.map((product) => (
                             <ProductCard
                                 key={product.id}
-
                                 product={product}
                             />
                         ))}

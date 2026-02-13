@@ -13,22 +13,17 @@ export default async function ProductsPage() {
     const { data: products } = await supabase
         .from("products")
         .select(`
-            *,
-            categories (
-                name,
-                slug
-            )
+            *
         `)
         .order("created_at", { ascending: false });
 
     // Format products for ProductCard
     const formattedProducts = (products || []).map(p => ({
         ...p,
-        categories: p.categories
-            ? Array.isArray(p.categories)
-                ? p.categories[0]
-                : p.categories
-            : null
+        category: {
+            name: p.category,
+            slug: p.category
+        }
     }));
 
     return (

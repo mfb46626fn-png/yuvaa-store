@@ -26,12 +26,14 @@ import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
 
+import { getCategoryTitle } from "@/lib/constants";
+
 type Product = {
     id: string;
     title: string;
     price: number;
     inventory: number;
-    category_id: string; // Simplification, join if needed
+    category: string; // Changed from category_id
     images: string[];
     slug: string;
 };
@@ -98,6 +100,7 @@ export default function AdminProductsPage() {
                         <TableRow>
                             <TableHead className="w-[80px]">Görsel</TableHead>
                             <TableHead>Ürün Adı</TableHead>
+                            <TableHead>Kategori</TableHead>
                             <TableHead>Stok</TableHead>
                             <TableHead className="text-right">Fiyat</TableHead>
                             <TableHead className="text-right">İşlemler</TableHead>
@@ -123,6 +126,9 @@ export default function AdminProductsPage() {
                                         <span>{product.title}</span>
                                         <span className="text-xs text-muted-foreground font-mono">{product.slug}</span>
                                     </div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant="outline">{getCategoryTitle(product.category)}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-2">

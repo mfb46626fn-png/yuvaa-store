@@ -50,9 +50,20 @@ export function ImageUpload({
 
             console.log("Starting upload...", { bucketName, filePath, fileSize: file.size });
 
-            const { data, error: uploadError } = await supabase.storage
+            // Create a promise that rejects after 30 seconds
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error("Upload timed out after 30 seconds")), 30000);
+            });
+
+            const uploadPromise = supabase.storage
                 .from(bucketName)
-                .upload(filePath, file);
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+
+            const result = await Promise.race([uploadPromise, timeoutPromise]) as any;
+            const { data, error: uploadError } = result;
 
             if (uploadError) {
                 console.error("Supabase Upload Error:", uploadError);

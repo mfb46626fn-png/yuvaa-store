@@ -10,9 +10,7 @@ import {
     ShoppingBag,
     Package,
     RotateCcw,
-    Tags,
     LogOut,
-    Settings
 } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
@@ -34,19 +32,9 @@ const sidebarItems = [
         icon: Package,
     },
     {
-        title: "Kategoriler",
-        href: "/admin/categories",
-        icon: Tags,
-    },
-    {
         title: "İade Talepleri",
         href: "/admin/returns",
         icon: RotateCcw,
-    },
-    {
-        title: "Site Ayarları",
-        href: "/admin/settings",
-        icon: Settings,
     },
 ];
 

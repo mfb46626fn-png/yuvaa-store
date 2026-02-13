@@ -1,17 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { CATEGORIES } from "@/lib/constants";
 
-export async function CategoryList() {
-    const supabase = await createServerSupabaseClient();
-    const { data: categories } = await supabase
-        .from("categories")
-        .select("*")
-        .order("created_at", { ascending: true });
-
-    if (!categories || categories.length === 0) {
-        return null;
-    }
+export function CategoryList() {
+    const categories = CATEGORIES;
 
     return (
         <section className="container mx-auto py-16">

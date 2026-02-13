@@ -5,8 +5,6 @@ import {
     ShoppingBag,
     Package,
     RotateCcw,
-    Tags,
-    Settings,
 } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
@@ -30,19 +28,9 @@ const sidebarItems = [
         icon: Package,
     },
     {
-        title: "Kategoriler",
-        href: "/admin/categories",
-        icon: Tags,
-    },
-    {
         title: "İade Talepleri",
         href: "/admin/returns",
         icon: RotateCcw,
-    },
-    {
-        title: "Site Ayarları",
-        href: "/admin/settings",
-        icon: Settings,
     },
 ];
 
