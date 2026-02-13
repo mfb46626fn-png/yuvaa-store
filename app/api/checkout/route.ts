@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { getPayTRToken } from "@/lib/paytr";
 import { nanoid } from "nanoid"; // Recommended for unique order IDs or use UUID
-import { sendSMS } from "@/lib/sms";
 
 export async function POST(req: Request) {
     try {
@@ -74,14 +73,6 @@ export async function POST(req: Request) {
         if (insertError) {
             console.error(insertError);
             return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
-        }
-
-        // Send SMS Notification
-        if (phone) {
-            await sendSMS({
-                to: phone,
-                message: `Sayin ${firstName} ${lastName}, siparisiniz alinmistir. Siparis No: ${merchantOid}. Tesekkurler!`
-            });
         }
 
         // 4. Request PayTR Token
