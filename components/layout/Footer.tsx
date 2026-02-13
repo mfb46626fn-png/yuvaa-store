@@ -46,16 +46,6 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/categories/duvar-dekoru" className="hover:text-primary transition-colors">
-                                    Duvar Dekoru
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/categories/masa-ustu" className="hover:text-primary transition-colors">
-                                    Masa Üstü
-                                </Link>
-                            </li>
-                            <li>
                                 <Link href="/about" className="hover:text-primary transition-colors">
                                     Hakkımızda
                                 </Link>
