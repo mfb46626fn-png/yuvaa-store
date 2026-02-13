@@ -94,6 +94,25 @@ export default function AdminOrdersPage() {
 
             setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
             toast.success(`Sipariş durumu güncellendi: ${newStatus}`);
+
+            // Send SMS for specific statuses
+            const order = orders.find(o => o.id === orderId);
+            const customerPhone = (order as any)?.shipping_address?.phone;
+
+            if (customerPhone && (newStatus === "delivered" || newStatus === "cancelled" || newStatus === "processing")) {
+                let message = "";
+                if (newStatus === "processing") message = `Siparisiniz hazirlaniyor. #${orderId.slice(0, 8)}`;
+                if (newStatus === "delivered") message = `Siparisiniz teslim edildi. Bizi tercih ettiginiz icin tesekkurler!`;
+                if (newStatus === "cancelled") message = `Siparisiniz iptal edildi. #${orderId.slice(0, 8)}`;
+
+                if (message) {
+                    fetch("/api/sms/send", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ phone: customerPhone, message })
+                    });
+                }
+            }
         } catch (error) {
             toast.error("Güncelleme başarısız.");
         }
@@ -114,7 +133,23 @@ export default function AdminOrdersPage() {
 
             if (error) throw error;
 
+            if (error) throw error;
+
             toast.success("Sipariş kargoya verildi olarak işaretlendi.");
+
+            // Send SMS
+            const customerPhone = (selectedOrder as any).shipping_address?.phone;
+            if (customerPhone) {
+                fetch("/api/sms/send", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        phone: customerPhone,
+                        message: `Siparisiniz kargoya verildi! Takip No: ${trackingNumber} (${carrier}).`
+                    })
+                });
+            }
+
             fetchOrders(); // Refresh to show new data
             setIsSheetOpen(false);
             setTrackingNumber("");
