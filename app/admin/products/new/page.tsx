@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,16 +16,22 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/constants";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Switch } from "@/components/ui/switch";
+
+interface Category {
+    id: string;
+    title: string;
+    slug: string;
+}
 
 export default function NewProductPage() {
     const router = useRouter();
     const supabase = createClient();
     const [isLoading, setIsLoading] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([]);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -37,6 +43,24 @@ export default function NewProductPage() {
         images: [] as string[],
         is_personalized: false
     });
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const { data, error } = await supabase
+                .from("categories")
+                .select("id, title, slug")
+                .order("title");
+
+            if (error) {
+                console.error("Error fetching categories:", error);
+                toast.error("Kategoriler yüklenemedi");
+            } else {
+                setCategories(data || []);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const handleSlugGeneration = (title: string) => {
         const slug = title
@@ -220,7 +244,7 @@ export default function NewProductPage() {
                                         <SelectValue placeholder="Kategori Seç" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {CATEGORIES.map((cat) => (
+                                        {categories.map((cat) => (
                                             <SelectItem key={cat.slug} value={cat.slug}>
                                                 {cat.title}
                                             </SelectItem>

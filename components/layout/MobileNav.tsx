@@ -1,22 +1,45 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu } from "lucide-react";
+import { Menu, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
     SheetContent,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { CATEGORIES } from "@/lib/constants";
+import { createClient } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+
+interface Category {
+    id: string;
+    title: string;
+    slug: string;
+}
 
 export function MobileNav() {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [loading, setLoading] = useState(true);
+    const supabase = createClient();
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const { data } = await supabase
+                .from("categories")
+                .select("id, title, slug")
+                .order("title");
+
+            setCategories(data || []);
+            setLoading(false);
+        };
+
+        fetchCategories();
+    }, []);
 
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -49,7 +72,11 @@ export function MobileNav() {
                                 Kategoriler
                             </h3>
                             <div className="space-y-1">
-                                {CATEGORIES.map((category) => (
+                                {loading ? (
+                                    <div className="flex justify-center py-2">
+                                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                    </div>
+                                ) : categories.map((category) => (
                                     <Link
                                         key={category.slug}
                                         href={`/categories/${category.slug}`}

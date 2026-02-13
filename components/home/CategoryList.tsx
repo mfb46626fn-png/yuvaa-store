@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CATEGORIES } from "@/lib/constants";
+import { createServerSupabaseClient } from "@/lib/supabase-server";
 
-export function CategoryList() {
-    const categories = CATEGORIES;
+export async function CategoryList() {
+    const supabase = await createServerSupabaseClient();
+    const { data: categories } = await supabase
+        .from("categories")
+        .select("*")
+        .order("title");
 
     return (
         <section className="container mx-auto py-16">
@@ -12,7 +16,7 @@ export function CategoryList() {
             </h2>
 
             <div className="flex gap-6 overflow-x-auto pb-6 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 sm:overflow-visible no-scrollbar">
-                {categories.map((category) => (
+                {categories?.map((category) => (
                     <Link
                         key={category.id}
                         href={`/categories/${category.slug}`}
