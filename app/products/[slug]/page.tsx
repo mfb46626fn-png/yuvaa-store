@@ -56,6 +56,8 @@ export default async function ProductPage({ params }: PageProps) {
 
     const formattedProduct = {
         ...product,
+        // Map database 'inventory' column to component 'stock_quantity' prop
+        stock_quantity: product.inventory,
         // Ensure category matches what components expect (string for slug)
         category: product.category || "ev-dekorasyon",
         categories: category || { name: "Ev Dekorasyon", slug: "ev-dekorasyon" }
