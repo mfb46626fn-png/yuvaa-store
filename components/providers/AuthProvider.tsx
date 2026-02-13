@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
 
     useEffect(() => {
         const initializeAuth = async () => {
@@ -52,7 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     setUser(null);
                     setProfile(null);
                 }
-            } catch (error) {
+            } catch (error: any) {
+                if (error.name === 'AbortError') return;
                 console.error("Auth initialization error:", error);
             } finally {
                 setIsLoading(false);

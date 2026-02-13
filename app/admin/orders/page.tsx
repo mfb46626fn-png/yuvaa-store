@@ -49,7 +49,7 @@ type Order = {
 export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
 
     // Shipping Update State
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);

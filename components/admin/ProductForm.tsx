@@ -43,7 +43,7 @@ interface ProductFormProps {
 
 export function ProductForm({ initialData }: ProductFormProps) {
     const router = useRouter();
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
     const [isLoading, setIsLoading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([]);
 

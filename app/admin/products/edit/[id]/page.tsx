@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export default function EditProductPage() {
     const params = useParams();
     const router = useRouter();
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
     const [product, setProduct] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
 

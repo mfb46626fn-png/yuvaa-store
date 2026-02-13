@@ -42,7 +42,7 @@ export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
 
     useEffect(() => {
         fetchProducts();
@@ -58,9 +58,10 @@ export default function AdminProductsPage() {
 
             if (error) throw error;
             setProducts(data || []);
-        } catch (error) {
+        } catch (error: any) {
+            if (error.name === 'AbortError') return;
             console.error("Products fetch error:", error);
-            toast.error("Ürünler yüklenemedi.");
+            toast.error(`Ürünler yüklenemedi: ${error.message || "Bilinmeyen hata"}`);
         } finally {
             setIsLoading(false);
         }

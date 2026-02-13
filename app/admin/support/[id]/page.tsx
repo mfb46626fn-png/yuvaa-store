@@ -34,7 +34,7 @@ export default function AdminTicketDetailPage() {
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
 
     useEffect(() => {
         const fetchTicket = async () => {

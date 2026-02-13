@@ -46,7 +46,7 @@ export default function AdminReturnsPage() {
     const [actionType, setActionType] = useState<"approve" | "reject" | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const supabase = createClient();
+    const [supabase] = useState(() => createClient());
 
     useEffect(() => {
         fetchReturns();
