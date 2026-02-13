@@ -49,6 +49,7 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
         });
 
         toast.success("Ürün sepete eklendi");
+        cart.onOpen(); // Open cart drawer automatically
         setQuantity(1);
         setNote("");
     };

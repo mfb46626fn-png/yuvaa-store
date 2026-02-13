@@ -14,14 +14,21 @@ export interface CartItem {
 
 interface CartStore {
     items: CartItem[];
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void;
     addItem: (data: CartItem) => void;
-    removeItem: (id: string, custom_note?: string) => void; // custom_note ile silme desteği (opsiyonel)
+    removeItem: (id: string, custom_note?: string) => void;
+    updateQuantity: (id: string, quantity: number, custom_note?: string) => void;
     clearCart: () => void;
 }
 
 export const useCart = create(
     persist<CartStore>(
         (set, get) => ({
+            isOpen: false,
+            onOpen: () => set({ isOpen: true }),
+            onClose: () => set({ isOpen: false }),
             items: [],
             addItem: (data: CartItem) => {
                 const currentItems = get().items;
@@ -45,6 +52,15 @@ export const useCart = create(
                 // Basitlik için ID kontrolü yeterli olabilir ama kişiselleştirme varsa notu da kontrol etmek daha doğru.
                 set({
                     items: get().items.filter((item) => !(item.id === id && item.custom_note === custom_note))
+                });
+            },
+            updateQuantity: (id: string, quantity: number, custom_note?: string) => {
+                set({
+                    items: get().items.map((item) =>
+                        (item.id === id && item.custom_note === custom_note)
+                            ? { ...item, quantity: quantity }
+                            : item
+                    )
                 });
             },
             clearCart: () => set({ items: [] }),
