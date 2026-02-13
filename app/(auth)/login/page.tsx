@@ -39,17 +39,8 @@ export default function LoginPage() {
             {/* Right: Form */}
             <div className="flex items-center justify-center p-8 bg-background">
                 <div className="mx-auto w-full max-w-[350px] space-y-8">
-                    {/* Mobile Logo */}
+                    {/* Mobile Logo - Removed */}
                     <div className="flex flex-col space-y-2 text-center">
-                        <div className="lg:hidden mx-auto relative w-32 h-12 mb-4">
-                            <Image
-                                src="/logo.png"
-                                alt="Yuvaa Logo"
-                                fill
-                                className="object-contain"
-                                priority
-                            />
-                        </div>
                         <h1 className="text-2xl font-serif font-semibold tracking-tight">Tekrar Hoşgeldiniz</h1>
                         <p className="text-sm text-muted-foreground">
                             Hesabınıza giriş yapmak için bilgilerinizi girin
