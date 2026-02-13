@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, LogOut } from "lucide-react";
+import { LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, LogOut, MessagesSquare } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -34,6 +34,11 @@ const sidebarItems = [
         title: "İadeler",
         href: "/admin/returns",
         icon: RotateCcw,
+    },
+    {
+        title: "Destek",
+        href: "/admin/support",
+        icon: MessagesSquare,
     },
 ];
 

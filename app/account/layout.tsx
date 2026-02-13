@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { User, Package, RotateCcw } from "lucide-react";
+import { User, Package, RotateCcw, MessagesSquare } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { redirect } from "next/navigation";
 import { AdminSidebarLogout } from "@/components/admin/AdminSidebar"; // Reusing logout button logic
@@ -20,6 +20,11 @@ const sidebarItems = [
         title: "İade Talepleri",
         href: "/account/returns",
         icon: RotateCcw,
+    },
+    {
+        title: "Destek Taleplerim",
+        href: "/account/support",
+        icon: MessagesSquare,
     },
 ];
 
