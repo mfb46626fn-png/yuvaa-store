@@ -58,47 +58,47 @@
  */
 
 :root {
-  --radius: 1rem;
-  
+  --radius: 0.5rem;
+
   /* Warm Minimalist - Light Mode */
   --background: #FDFBF7;
   --foreground: #2D2A26;
-  
+
   --card: #FDFBF7;
   --card-foreground: #2D2A26;
-  
+
   --popover: #FDFBF7;
   --popover-foreground: #2D2A26;
-  
+
   /* Terracotta Primary */
   --primary: #C05621;
   --primary-foreground: #FDFBF7;
-  
+
   /* Sage Green Secondary */
   --secondary: #4A5D4F;
   --secondary-foreground: #FDFBF7;
-  
+
   /* Light Gray Muted */
   --muted: #E2E8F0;
   --muted-foreground: #64748B;
-  
+
   /* Accent (Sage Green variant) */
   --accent: #E8EDE9;
   --accent-foreground: #2D2A26;
-  
+
   --destructive: #DC2626;
-  
+
   --border: #E2E8F0;
   --input: #E2E8F0;
   --ring: #C05621;
-  
+
   /* Chart Colors - Warm palette */
   --chart-1: #C05621;
   --chart-2: #4A5D4F;
   --chart-3: #D97706;
   --chart-4: #6B7F71;
   --chart-5: #92400E;
-  
+
   /* Sidebar - Warm tones */
   --sidebar: #FAF8F4;
   --sidebar-foreground: #2D2A26;
@@ -114,42 +114,42 @@
   /* Warm Minimalist - Dark Mode */
   --background: #1C1A17;
   --foreground: #FAF8F4;
-  
+
   --card: #252320;
   --card-foreground: #FAF8F4;
-  
+
   --popover: #252320;
   --popover-foreground: #FAF8F4;
-  
+
   /* Terracotta Primary (lighter for dark mode) */
   --primary: #E07A3D;
   --primary-foreground: #1C1A17;
-  
+
   /* Sage Green Secondary (lighter for dark mode) */
   --secondary: #6B8F73;
   --secondary-foreground: #1C1A17;
-  
+
   /* Muted for dark mode */
   --muted: #353330;
   --muted-foreground: #A8A29E;
-  
+
   /* Accent */
   --accent: #353330;
   --accent-foreground: #FAF8F4;
-  
+
   --destructive: #EF4444;
-  
+
   --border: #353330;
   --input: #353330;
   --ring: #E07A3D;
-  
+
   /* Chart Colors - Warm palette (dark mode) */
   --chart-1: #E07A3D;
   --chart-2: #6B8F73;
   --chart-3: #FBBF24;
   --chart-4: #8BAD95;
   --chart-5: #F59E0B;
-  
+
   /* Sidebar - Dark warm tones */
   --sidebar: #252320;
   --sidebar-foreground: #FAF8F4;
@@ -165,10 +165,17 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground font-sans;
   }
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
   }
 }
