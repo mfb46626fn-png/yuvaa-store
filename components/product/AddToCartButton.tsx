@@ -16,11 +16,15 @@ interface AddToCartButtonProps {
         slug: string;
         stock_quantity: number;
     };
+    personalization?: {
+        type: "text" | "image";
+        value: string;
+    };
+    isPersonalizationRequired?: boolean;
 }
 
-export function AddToCartButton({ product }: AddToCartButtonProps) {
+export function AddToCartButton({ product, personalization, isPersonalizationRequired }: AddToCartButtonProps) {
     const [quantity, setQuantity] = useState(1);
-    const [note, setNote] = useState("");
     const cart = useCart();
 
     const increaseQuantity = () => {
@@ -38,19 +42,23 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
     };
 
     const handleAddToCart = () => {
+        if (isPersonalizationRequired && !personalization) {
+            toast.error("Lütfen kişiselleştirme bilgilerini giriniz.");
+            return;
+        }
+
         cart.addItem({
             id: product.id,
             title: product.title,
             price: product.price,
             image: product.image,
             quantity: quantity,
-            custom_note: note.trim() || undefined,
             slug: product.slug,
+            personalization: personalization
         });
 
         toast.success("Ürün sepete eklendi");
         setQuantity(1);
-        setNote("");
     };
 
     const isOutOfStock = product.stock_quantity <= 0;
@@ -65,19 +73,6 @@ export function AddToCartButton({ product }: AddToCartButtonProps) {
 
     return (
         <div className="space-y-4">
-            {/* Personalization Note */}
-            <div className="space-y-2">
-                <label className="text-sm font-medium text-muted-foreground">
-                    Kişiselleştirme Notu (Opsiyonel)
-                </label>
-                <Input
-                    placeholder="Varsa özel notunuzu buraya yazabilirsiniz..."
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    maxLength={100}
-                />
-            </div>
-
             <div className="flex gap-4">
                 {/* Quantity Selector */}
                 <div className="flex items-center border rounded-md h-12">

@@ -131,6 +131,13 @@ export default function AdminOrdersPage() {
         setIsSheetOpen(true);
     };
 
+    const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+    const openDetails = (order: Order) => {
+        setSelectedOrder(order);
+        setIsDetailsOpen(true);
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -177,6 +184,10 @@ export default function AdminOrdersPage() {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>İşlemler</DropdownMenuLabel>
+                                            <DropdownMenuItem onClick={() => openDetails(order)}>
+                                                <Eye className="mr-2 h-4 w-4" />
+                                                Detayları Gör
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(order.id)}>
                                                 ID Kopyala
                                             </DropdownMenuItem>
@@ -203,6 +214,82 @@ export default function AdminOrdersPage() {
                     </TableBody>
                 </Table>
             </div>
+
+            {/* Order Details Sheet */}
+            <Sheet open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+                <SheetContent className="sm:max-w-xl overflow-y-auto">
+                    <SheetHeader>
+                        <SheetTitle>Sipariş Detayı</SheetTitle>
+                        <SheetDescription>
+                            #{selectedOrder?.id.slice(0, 8)} numaralı siparişin detayları.
+                        </SheetDescription>
+                    </SheetHeader>
+
+                    {selectedOrder && (
+                        <div className="space-y-6 py-6">
+                            {/* Customer Info */}
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-lg">Teslimat Bilgileri</h3>
+                                <div className="bg-muted/30 p-4 rounded-lg text-sm space-y-1">
+                                    <p><span className="font-medium">Alıcı:</span> {(selectedOrder as any).shipping_address?.firstName} {(selectedOrder as any).shipping_address?.lastName}</p>
+                                    <p><span className="font-medium">Telefon:</span> {(selectedOrder as any).shipping_address?.phone}</p>
+                                    <p><span className="font-medium">Adres:</span> {(selectedOrder as any).shipping_address?.address}</p>
+                                    <p>{(selectedOrder as any).shipping_address?.district} / {(selectedOrder as any).shipping_address?.city}</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="font-semibold text-lg">Ürünler</h3>
+                                <div className="space-y-4">
+                                    {((selectedOrder as any).items || []).map((item: any, idx: number) => (
+                                        <div key={idx} className="flex gap-4 border rounded-lg p-3">
+                                            <div className="h-16 w-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                                                <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                                            </div>
+                                            <div className="flex-1 space-y-1">
+                                                <p className="font-medium text-sm line-clamp-2">{item.title}</p>
+                                                <p className="text-xs text-muted-foreground">Adet: {item.quantity} x ₺{item.price}</p>
+
+                                                {/* Personalization Display */}
+                                                {item.personalization && (
+                                                    <div className="mt-2 bg-primary/5 p-2 rounded text-xs border border-primary/20">
+                                                        <span className="font-semibold text-primary block mb-1">
+                                                            Kişiselleştirme ({item.personalization.type === "text" ? "Yazı" : "Görsel"}):
+                                                        </span>
+                                                        {item.personalization.type === "text" ? (
+                                                            <p className="italic">"{item.personalization.value}"</p>
+                                                        ) : (
+                                                            <div>
+                                                                <a
+                                                                    href={item.personalization.value}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-primary hover:underline flex items-center gap-1"
+                                                                >
+                                                                    Görseli Görüntüle / İndir
+                                                                </a>
+                                                                <img src={item.personalization.value} className="mt-1 h-20 rounded border" alt="User upload" />
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="font-medium text-sm">
+                                                ₺{(item.price * item.quantity).toLocaleString("tr-TR")}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between items-center pt-4 border-t">
+                                <span className="font-semibold text-lg">Toplam Tutar</span>
+                                <span className="font-bold text-xl">₺{selectedOrder.total.toLocaleString("tr-TR")}</span>
+                            </div>
+                        </div>
+                    )}
+                </SheetContent>
+            </Sheet>
 
             {/* Shipping Sheet */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
