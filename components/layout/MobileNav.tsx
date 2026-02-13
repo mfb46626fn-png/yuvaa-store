@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/sheet";
 import { createClient } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/components/providers/AuthProvider";
+import { LogOut, User, ShoppingBag, LayoutDashboard } from "lucide-react";
 
 interface Category {
     id: string;
@@ -26,6 +28,7 @@ export function MobileNav() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
+    const { user, profile, signOut } = useAuth();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -118,6 +121,75 @@ export function MobileNav() {
                         </div>
                     </div>
                 </nav>
+
+                {/* Auth Section */}
+                <div className="p-4 border-t border-border bg-muted/20">
+                    {user ? (
+                        <div className="space-y-3">
+                            <div className="flex items-center gap-3 px-2 mb-4">
+                                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                    {profile?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-medium text-sm">{profile?.full_name || "Kullanıcı"}</span>
+                                    <span className="text-xs text-muted-foreground truncate max-w-[180px]">{user.email}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1">
+                                {profile?.role === "admin" && (
+                                    <Link
+                                        href="/admin"
+                                        onClick={() => setOpen(false)}
+                                        className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                    >
+                                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                                        Yönetim Paneli
+                                    </Link>
+                                )}
+                                <Link
+                                    href="/account/orders"
+                                    onClick={() => setOpen(false)}
+                                    className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                >
+                                    <ShoppingBag className="mr-2 h-4 w-4" />
+                                    Siparişlerim
+                                </Link>
+                                <Link
+                                    href="/account/profile"
+                                    onClick={() => setOpen(false)}
+                                    className="flex items-center rounded-md px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                                >
+                                    <User className="mr-2 h-4 w-4" />
+                                    Profilim
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        signOut();
+                                        setOpen(false);
+                                    }}
+                                    className="w-full flex items-center rounded-md px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors text-left"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" />
+                                    Çıkış Yap
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-3">
+                            <Button variant="outline" asChild className="w-full">
+                                <Link href="/login" onClick={() => setOpen(false)}>
+                                    Giriş Yap
+                                </Link>
+                            </Button>
+                            <Button asChild className="w-full">
+                                <Link href="/register" onClick={() => setOpen(false)}>
+                                    Kayıt Ol
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
+                </div>
 
                 {/* Footer (Optional, removed profile) */}
                 <div className="p-4 border-t border-border text-center text-xs text-muted-foreground">
