@@ -61,7 +61,7 @@ export async function CategoryList() {
             <div className="mt-8 text-center sm:hidden">
                 <Link href="/categories">
                     <Button variant="outline" className="w-full">
-                        Tüm Koleksiyonları Gör
+                        Tüm Kategorileri Gör
                     </Button>
                 </Link>
             </div>

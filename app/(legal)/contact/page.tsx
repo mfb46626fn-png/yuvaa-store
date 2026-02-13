@@ -7,19 +7,40 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { createClient } from "@/lib/supabase";
+
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const supabase = createClient();
 
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setIsSubmitting(true);
 
-        // Simulating form submission
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        const formData = new FormData(e.currentTarget);
+        const data = {
+            first_name: formData.get("name") as string,
+            last_name: formData.get("surname") as string,
+            email: formData.get("email") as string,
+            subject: formData.get("subject") as string,
+            message: formData.get("message") as string,
+        };
 
-        toast.success("Mesajınız iletildi! En kısa sürede dönüş yapacağız.");
-        setIsSubmitting(false);
-        (e.target as HTMLFormElement).reset();
+        try {
+            const { error } = await supabase
+                .from("contact_messages")
+                .insert([data]);
+
+            if (error) throw error;
+
+            toast.success("Mesajınız iletildi! En kısa sürede dönüş yapacağız.");
+            (e.target as HTMLFormElement).reset();
+        } catch (error: any) {
+            console.error("Error submitting contact form:", error);
+            toast.error("Mesajınız gönderilemedi. Lütfen tekrar deneyin.");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
@@ -103,28 +124,29 @@ export default function ContactPage() {
                             <div className="grid sm:grid-cols-2 gap-5">
                                 <div className="space-y-2">
                                     <label htmlFor="name" className="text-sm font-medium">Adınız</label>
-                                    <Input id="name" placeholder="Adınız" required />
+                                    <Input id="name" name="name" placeholder="Adınız" required />
                                 </div>
                                 <div className="space-y-2">
                                     <label htmlFor="surname" className="text-sm font-medium">Soyadınız</label>
-                                    <Input id="surname" placeholder="Soyadınız" required />
+                                    <Input id="surname" name="surname" placeholder="Soyadınız" required />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
                                 <label htmlFor="email" className="text-sm font-medium">E-posta</label>
-                                <Input id="email" type="email" placeholder="ornek@email.com" required />
+                                <Input id="email" name="email" type="email" placeholder="ornek@email.com" required />
                             </div>
 
                             <div className="space-y-2">
                                 <label htmlFor="subject" className="text-sm font-medium">Konu</label>
-                                <Input id="subject" placeholder="Mesajınızın konusu" required />
+                                <Input id="subject" name="subject" placeholder="Mesajınızın konusu" required />
                             </div>
 
                             <div className="space-y-2">
                                 <label htmlFor="message" className="text-sm font-medium">Mesajınız</label>
                                 <Textarea
                                     id="message"
+                                    name="message"
                                     placeholder="Size nasıl yardımcı olabiliriz?"
                                     className="min-h-[120px] resize-none"
                                     required
