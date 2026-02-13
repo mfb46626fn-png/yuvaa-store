@@ -45,7 +45,7 @@ export async function FeaturedProducts() {
     }));
 
     return (
-        <section className="bg-secondary/10 py-20">
+        <section className="bg-secondary/10 py-20 px-4 md:px-6">
             <div className="container mx-auto">
                 <div className="mb-12 flex items-end justify-between">
                     <div>
