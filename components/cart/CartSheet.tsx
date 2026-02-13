@@ -51,7 +51,7 @@ export function CartSheet() {
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent className="flex w-full flex-col pr-0 sm:max-w-lg">
+            <SheetContent className="flex w-[85vw] flex-col pr-0 sm:max-w-lg">
                 <SheetHeader className="px-1">
                     <SheetTitle>Alışveriş Sepeti ({itemCount})</SheetTitle>
                 </SheetHeader>
