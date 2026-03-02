@@ -19,7 +19,7 @@ import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { authSchema, type AuthFormValues } from "@/lib/validations/auth";
+import { loginSchema, registerSchema, type AuthFormValues } from "@/lib/validations/auth";
 
 interface AuthFormProps {
     type: "login" | "register";
@@ -30,8 +30,10 @@ export function AuthForm({ type }: AuthFormProps) {
     const router = useRouter();
     const supabase = createClient();
 
+    const schema = type === "login" ? loginSchema : registerSchema;
+
     const form = useForm<AuthFormValues>({
-        resolver: zodResolver(authSchema),
+        resolver: zodResolver(schema) as any,
         defaultValues: {
             email: "",
             password: "",
@@ -59,14 +61,6 @@ export function AuthForm({ type }: AuthFormProps) {
                 router.refresh();
             } else {
                 // REGISTER
-                if (!data.fullName) {
-                    form.setError("fullName", { message: "Ad Soyad gereklidir" });
-                    return;
-                }
-                if (!data.phone) {
-                    form.setError("phone", { message: "Telefon numarası gereklidir" });
-                    return;
-                }
 
                 const { error } = await supabase.auth.signUp({
                     email: data.email,
