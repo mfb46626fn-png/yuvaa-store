@@ -122,3 +122,20 @@ export async function getCategories(): Promise<Category[]> {
 
     return data || [];
 }
+
+export async function deleteProduct(productId: string) {
+    const supabase = await createServerSupabaseClient();
+
+    const { error } = await supabase
+        .from("products")
+        .delete()
+        .eq("id", productId);
+
+    if (error) {
+        console.error("Error deleting product:", error);
+        return { success: false, error: error.message };
+    }
+
+    revalidatePath("/admin/products");
+    return { success: true };
+}

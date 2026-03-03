@@ -4,9 +4,11 @@ import { sendReplyEmail } from "@/lib/resend";
 
 export async function POST(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const resolvedParams = await params;
+        const ticketId = resolvedParams.id;
         const supabase = await createServerSupabaseClient();
         const { data: { session } } = await supabase.auth.getSession();
 
@@ -16,7 +18,6 @@ export async function POST(
 
         const body = await req.json();
         const { message } = body;
-        const ticketId = params.id;
 
         if (!message) {
             return new NextResponse("Missing message", { status: 400 });

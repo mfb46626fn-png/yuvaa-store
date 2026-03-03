@@ -21,12 +21,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Edit, MoreHorizontal, Plus, AlertTriangle, Search } from "lucide-react";
+import { Edit, MoreHorizontal, Plus, AlertTriangle, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
 
 import { getCategoryTitle } from "@/lib/constants";
+import { deleteProduct } from "./actions";
 
 type Product = {
     id: string;
@@ -64,6 +65,25 @@ export default function AdminProductsPage() {
             toast.error(`Ürünler yüklenemedi: ${error.message || "Bilinmeyen hata"}`);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleDelete = async (productId: string, productTitle: string) => {
+        if (!window.confirm(`"${productTitle}" adlı ürünü silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) {
+            return;
+        }
+
+        try {
+            const result = await deleteProduct(productId);
+            if (result.success) {
+                toast.success("Ürün başarıyla silindi.");
+                // Refresh list locally to avoid full page reload delay
+                setProducts(products.filter(p => p.id !== productId));
+            } else {
+                toast.error(`Ürün silinemedi: ${result.error}`);
+            }
+        } catch (error) {
+            toast.error("Bir hata oluştu.");
         }
     };
 
@@ -162,6 +182,14 @@ export default function AdminProductsPage() {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => window.open(`/products/${product.slug}`, '_blank')}>
                                                 Sitede Gör
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuItem
+                                                onClick={() => handleDelete(product.id, product.title)}
+                                                className="text-destructive focus:text-destructive"
+                                            >
+                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                Sil
                                             </DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>

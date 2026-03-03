@@ -3,9 +3,10 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const resolvedParams = await params;
         const supabase = await createServerSupabaseClient();
         const { data: { session } } = await supabase.auth.getSession();
 
@@ -26,7 +27,7 @@ export async function PATCH(
 
         const body = await req.json();
         const { status } = body;
-        const ticketId = params.id;
+        const ticketId = resolvedParams.id;
 
         const { error } = await supabase
             .from("support_tickets")
