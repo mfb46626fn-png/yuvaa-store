@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { updateOrderStatus, updateOrderShipping } from "./actions";
 import { createClient } from "@/lib/supabase";
 import {
     Table,
@@ -49,6 +50,7 @@ type Order = {
 export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isPending, startTransition] = useTransition();
     const [supabase] = useState(() => createClient());
 
     // Shipping Update State
@@ -80,48 +82,34 @@ export default function AdminOrdersPage() {
         }
     };
 
-    const handleStatusUpdate = async (orderId: string, newStatus: string) => {
-        try {
-            const updateData: any = { status: newStatus };
-
-            // Allow basic status changes directly. For 'shipping', we use the sheet.
-            const { error } = await supabase
-                .from("orders")
-                .update(updateData)
-                .eq("id", orderId);
-
-            if (error) throw error;
-
-            setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-            toast.success(`Sipariş durumu güncellendi: ${newStatus}`);
-        } catch (error) {
-            toast.error("Güncelleme başarısız.");
-        }
+    const handleStatusUpdate = (orderId: string, newStatus: string) => {
+        startTransition(async () => {
+            try {
+                await updateOrderStatus(orderId, newStatus);
+                setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+                toast.success(`Sipariş durumu güncellendi: ${newStatus} (Müşteriye bilgi maili gönderildi)`);
+            } catch (error: any) {
+                toast.error(error.message || "Güncelleme başarısız.");
+            }
+        });
     };
 
-    const handleShippingSubmit = async () => {
+    const handleShippingSubmit = () => {
         if (!selectedOrder) return;
 
-        try {
-            const { error } = await supabase
-                .from("orders")
-                .update({
-                    status: "shipping",
-                    tracking_number: trackingNumber,
-                    carrier: carrier,
-                })
-                .eq("id", selectedOrder.id);
+        startTransition(async () => {
+            try {
+                await updateOrderShipping(selectedOrder.id, trackingNumber, carrier);
 
-            if (error) throw error;
-
-            toast.success("Sipariş kargoya verildi olarak işaretlendi.");
-            fetchOrders(); // Refresh to show new data
-            setIsSheetOpen(false);
-            setTrackingNumber("");
-            setCarrier("");
-        } catch (error) {
-            toast.error("İşlem başarısız.");
-        }
+                toast.success("Sipariş kargoya verildi. Müşteriye bilgi email ile iletildi.");
+                fetchOrders(); // Refresh to show new data
+                setIsSheetOpen(false);
+                setTrackingNumber("");
+                setCarrier("");
+            } catch (error: any) {
+                toast.error(error.message || "İşlem başarısız.");
+            }
+        });
     };
 
     const openShippingSheet = (order: Order) => {

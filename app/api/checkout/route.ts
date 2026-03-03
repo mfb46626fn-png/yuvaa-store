@@ -75,6 +75,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
         }
 
+        // Send Order Received Email asynchronously
+        import("@/lib/resend").then(({ sendOrderStatusEmail }) => {
+            if (email) {
+                sendOrderStatusEmail(merchantOid, email, "pending").catch(e => console.error("Email failed:", e));
+            }
+        });
+
         // 4. Request PayTR Token
         const userIp = req.headers.get("x-forwarded-for") || "127.0.0.1";
 
