@@ -110,3 +110,147 @@ Bu şablon, "Şifremi Unuttum" diyen kullanıcılara gidecektir. Bu da `yuvaasto
     <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
   </div>
 </div>
+
+---
+
+### 3. Change Email Address (E-posta Adresini Değiştirme)
+
+Kullanıcı e-posta adresini değiştirmek istediğinde ona gidecek onay mailidir.
+
+**Subject:** E-posta Adresinizi Onaylayın - Yuvaa Store
+
+**Message Body (Source sekmesine yapıştırın - Sadece içindeki kodu alın):**
+
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #FDFCF8; border-radius: 8px; border: 1px solid #eaeaea;">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #c96530; font-family: Georgia, serif; font-size: 32px; margin: 0;">Yuvaa</h1>
+  </div>
+  
+  <div style="background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+    <h2 style="color: #333; font-size: 24px; margin-top: 0; text-align: center;">E-posta Değişikliği</h2>
+    <p style="color: #555; font-size: 16px; line-height: 1.6;">
+      Merhaba, <br><br>
+      Yuvaa Store hesabınızın e-posta adresini değiştirmek için bir talep aldık. Yeni e-posta adresinizi doğrulamak için lütfen aşağıdaki butona tıklayın.
+    </p>
+    
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email_change&next=/account/profile" style="background-color: #c96530; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">E-postayı Onayla</a>
+    </div>
+    
+    <p style="color: #777; font-size: 14px; line-height: 1.5; border-top: 1px solid #eee; padding-top: 20px;">
+      Eğer bu e-posta değişikliğini siz talep etmediyseniz, lütfen hemen destek ekibimizle iletişime geçin.
+    </p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+  </div>
+</div>
+
+---
+
+### 4. Password Changed (Şifre Değiştirildi Bildirimi)
+
+Kullanıcı şifresini başarıyla değiştirdikten sonra giden bilgilendirme mesajıdır. (İçinde link olmaz).
+
+**Subject:** Şifreniz Başarıyla Değiştirildi - Yuvaa Store
+
+**Message Body (Source sekmesine yapıştırın - Sadece içindeki kodu alın):**
+
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #FDFCF8; border-radius: 8px; border: 1px solid #eaeaea;">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #c96530; font-family: Georgia, serif; font-size: 32px; margin: 0;">Yuvaa</h1>
+  </div>
+  
+  <div style="background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+    <h2 style="color: #333; font-size: 24px; margin-top: 0; text-align: center; color: #16a34a;">Tebrikler!</h2>
+    <p style="color: #555; font-size: 16px; line-height: 1.6;">
+      Merhaba, <br><br>
+      Yuvaa Store hesabınızın şifresi başarıyla güncellenmiştir. Hesabınız artık yeni şifrenizle güvendedir. 
+    </p>
+    
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="{{ .SiteURL }}/login" style="background-color: #333333; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">Siteye Git</a>
+    </div>
+    
+    <p style="color: #777; font-size: 14px; line-height: 1.5; border-top: 1px solid #eee; padding-top: 20px;">
+      Bu işlemi siz gerçekleştirmediyseniz lütfen vakit kaybetmeden destek ekibimizle iletişime geçin.
+    </p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+  </div>
+</div>
+
+---
+
+### 5. Email Address Changed (E-posta Değiştirildi Bildirimi)
+
+E-posta değişimi başarıyla tamamlandığında eski/yeni adrese giden genel bildirimdir.
+
+**Subject:** E-posta Adresiniz Güncellendi - Yuvaa Store
+
+**Message Body (Source sekmesine yapıştırın - Sadece içindeki kodu alın):**
+
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #FDFCF8; border-radius: 8px; border: 1px solid #eaeaea;">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #c96530; font-family: Georgia, serif; font-size: 32px; margin: 0;">Yuvaa</h1>
+  </div>
+  
+  <div style="background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+    <h2 style="color: #333; font-size: 24px; margin-top: 0; text-align: center;">Güncelleme Başarılı</h2>
+    <p style="color: #555; font-size: 16px; line-height: 1.6;">
+      Merhaba, <br><br>
+      Yuvaa Store hesabınıza kayıtlı e-posta adresiniz başarıyla güncellenmiştir. Artık siteye giriş yaparken veya bildirim alırken yeni e-posta adresiniz kullanılacaktır.
+    </p>
+    
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="{{ .SiteURL }}/login" style="background-color: #333333; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">Giriş Yap</a>
+    </div>
+    
+    <p style="color: #777; font-size: 14px; line-height: 1.5; border-top: 1px solid #eee; padding-top: 20px;">
+      Bu değişikliği siz yapmadıysanız lütfen şifrenizi sıfırlayın veya bizimle iletişime geçin.
+    </p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+  </div>
+</div>
+
+---
+
+### 6. Phone Number Changed (Telefon Numarası Değiştirildi Bildirimi)
+
+Supabase Auth üzerinden telefon güncellemesi yapıldığında giden mesajdır (SMS değil, Email olarak gidiyorsa).
+
+**Subject:** Telefon Numaranız Güncellendi - Yuvaa Store
+
+**Message Body (Source sekmesine yapıştırın - Sadece içindeki kodu alın):**
+
+<div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 40px 20px; background-color: #FDFCF8; border-radius: 8px; border: 1px solid #eaeaea;">
+  <div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #c96530; font-family: Georgia, serif; font-size: 32px; margin: 0;">Yuvaa</h1>
+  </div>
+  
+  <div style="background-color: #ffffff; padding: 40px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+    <h2 style="color: #333; font-size: 24px; margin-top: 0; text-align: center;">Tebrikler!</h2>
+    <p style="color: #555; font-size: 16px; line-height: 1.6;">
+      Merhaba, <br><br>
+      Yuvaa Store hesabınızdaki telefon numaranız başarıyla güncellenmiştir. Sipariş durum bilgilendirmeleriniz artık bu yeni numaraya yapılacaktır.
+    </p>
+    
+    <div style="text-align: center; margin: 40px 0;">
+      <a href="{{ .SiteURL }}/account/profile" style="background-color: #333333; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-weight: bold; display: inline-block; font-size: 16px;">Hesabıma Git</a>
+    </div>
+    
+    <p style="color: #777; font-size: 14px; line-height: 1.5; border-top: 1px solid #eee; padding-top: 20px;">
+      Eğer bu işlemi siz gerçekleştirmediyseniz lütfen vakit kaybetmeden destek ekibimizle iletişime geçin.
+    </p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+  </div>
+</div>
