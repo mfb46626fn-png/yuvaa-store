@@ -42,6 +42,10 @@ interface ProductFormProps {
         material?: string;
         dimensions?: string;
         care_instructions?: string;
+        orientation?: string;
+        tone?: string;
+        has_frame?: boolean;
+        size_category?: string;
     };
 }
 
@@ -63,7 +67,11 @@ export function ProductForm({ initialData }: ProductFormProps) {
         variants: initialData?.variants || [] as { name: string; price: number; stock: number }[],
         material: initialData?.material || "",
         dimensions: initialData?.dimensions || "",
-        care_instructions: initialData?.care_instructions || ""
+        care_instructions: initialData?.care_instructions || "",
+        orientation: initialData?.orientation || "",
+        tone: initialData?.tone || "",
+        has_frame: initialData?.has_frame || false,
+        size_category: initialData?.size_category || "",
     });
 
     useEffect(() => {
@@ -159,7 +167,11 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 variants: formData.variants,
                 material: formData.material,
                 dimensions: formData.dimensions,
-                care_instructions: formData.care_instructions
+                care_instructions: formData.care_instructions,
+                orientation: formData.orientation,
+                tone: formData.tone,
+                has_frame: formData.has_frame,
+                size_category: formData.size_category
             };
 
             if (initialData) {
@@ -337,6 +349,71 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
                 {/* Right Column: Settings */}
                 <div className="space-y-6 w-full max-w-full overflow-hidden">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Filtreler & Özellikler</CardTitle>
+                            <CardDescription>Kategori sayfalarında filtreleme için kullanılacak değerler.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>Yön (Oryantasyon)</Label>
+                                <Select
+                                    value={formData.orientation}
+                                    onValueChange={(val) => setFormData({ ...formData, orientation: val })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Belirtilmemiş" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="none">Belirtilmemiş</SelectItem>
+                                        <SelectItem value="Yatay">Yatay</SelectItem>
+                                        <SelectItem value="Dikey">Dikey</SelectItem>
+                                        <SelectItem value="Kare">Kare</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Boyut Sınıflandırması</Label>
+                                <Select
+                                    value={formData.size_category}
+                                    onValueChange={(val) => setFormData({ ...formData, size_category: val })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Belirtilmemiş" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="none">Belirtilmemiş</SelectItem>
+                                        <SelectItem value="Küçük">Küçük</SelectItem>
+                                        <SelectItem value="Orta">Orta</SelectItem>
+                                        <SelectItem value="Büyük">Büyük</SelectItem>
+                                        <SelectItem value="Özel Ölçü">Özel Ölçü</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="tone">Renk / Ton</Label>
+                                <Input
+                                    id="tone"
+                                    placeholder="Örn: Açık Ton, Ceviz, Siyah..."
+                                    value={formData.tone}
+                                    onChange={(e) => setFormData({ ...formData, tone: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between rounded-lg border p-3">
+                                <div className="space-y-0.5">
+                                    <Label className="text-sm">Çerçeveli mi?</Label>
+                                </div>
+                                <Switch
+                                    checked={formData.has_frame}
+                                    onCheckedChange={(checked) => setFormData({ ...formData, has_frame: checked })}
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
                     <Card>
                         <CardHeader>
                             <CardTitle>Kategori & Stok</CardTitle>

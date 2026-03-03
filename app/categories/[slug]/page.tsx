@@ -7,6 +7,7 @@ interface PageProps {
     params: Promise<{
         slug: string;
     }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -31,8 +32,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default async function CategoryPage({ params }: PageProps) {
+import { CategoryFilters } from "@/components/category/CategoryFilters";
+
+export default async function CategoryPage({ params, searchParams }: PageProps) {
     const { slug } = await params;
+    const resolvedSearchParams = await searchParams;
     const supabase = await createServerSupabaseClient();
 
     // 1. Get Category from DB
@@ -46,12 +50,46 @@ export default async function CategoryPage({ params }: PageProps) {
         notFound();
     }
 
-    // 2. Get Products by Category Slug (Text column)
-    const { data: products } = await supabase
+    // 2. Build Products Query
+    let query = supabase
         .from("products")
         .select("*")
-        .eq("category", slug) // Match against text column
-        .order("created_at", { ascending: false });
+        .eq("category", slug)
+        .eq("is_active", true); // Only active ones
+
+    // Apply Filters from URL
+    const orientation = resolvedSearchParams.orientation as string;
+    if (orientation) query = query.in("orientation", orientation.split(','));
+
+    const size = resolvedSearchParams.size as string;
+    if (size) query = query.in("size_category", size.split(','));
+
+    const tone = resolvedSearchParams.tone as string;
+    if (tone) query = query.in("tone", tone.split(','));
+
+    const frame = resolvedSearchParams.frame as string;
+    if (frame) {
+        // Handle boolean parsing. If URL has 'true,false', ignore filtering.
+        const frames = frame.split(',');
+        if (frames.length === 1) {
+            query = query.eq("has_frame", frames[0] === 'true');
+        }
+    }
+
+    const { data: products } = await query.order("created_at", { ascending: false });
+
+    // 3. Extract unique available filters for this category's ACTIVE products
+    const { data: allCategoryProducts } = await supabase
+        .from("products")
+        .select("orientation, tone, size_category")
+        .eq("category", slug)
+        .eq("is_active", true);
+
+    const availableFilters = {
+        orientations: Array.from(new Set((allCategoryProducts || []).map(p => p.orientation).filter(Boolean))),
+        tones: Array.from(new Set((allCategoryProducts || []).map(p => p.tone).filter(Boolean))),
+        sizeCategories: Array.from(new Set((allCategoryProducts || []).map(p => p.size_category).filter(Boolean))),
+    };
 
     // Format products for ProductCard
     const formattedProducts = (products || []).map(p => ({
@@ -75,26 +113,33 @@ export default async function CategoryPage({ params }: PageProps) {
                     </h1>
                 </div>
 
-                {/* Product Grid */}
-                {formattedProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
-                        {formattedProducts.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                product={product}
-                            />
-                        ))}
+                {/* Main Content Layout */}
+                <div className="flex flex-col lg:flex-row items-start relative">
+                    <CategoryFilters availableFilters={availableFilters} />
+
+                    <div className="flex-1 w-full">
+                        {/* Product Grid */}
+                        {formattedProducts.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+                                {formattedProducts.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        product={product}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-20 text-center border rounded-lg border-dashed">
+                                <p className="text-lg text-muted-foreground">
+                                    Arama kriterlerinize uygun ürün bulunamadı.
+                                </p>
+                                <p className="text-sm text-muted-foreground mt-2">
+                                    Filtreleri temizleyerek daha fazla ürüne ulaşabilirsiniz.
+                                </p>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="flex flex-col items-center justify-center py-20 text-center border rounded-lg border-dashed">
-                        <p className="text-lg text-muted-foreground">
-                            Bu kategoride henüz ürün bulunmuyor.
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-2">
-                            Yakında eklenecek yeni parçalar için takipte kalın.
-                        </p>
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );

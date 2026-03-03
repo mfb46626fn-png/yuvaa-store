@@ -67,6 +67,10 @@ export interface ProductFormData {
     material?: string;
     dimensions?: string;
     care_instructions?: string;
+    orientation?: string;
+    tone?: string;
+    has_frame?: boolean;
+    size_category?: string;
 }
 
 export async function createProduct(data: ProductFormData) {
@@ -101,7 +105,11 @@ export async function createProduct(data: ProductFormData) {
             slug,
             material: data.material,
             dimensions: data.dimensions,
-            care_instructions: data.care_instructions
+            care_instructions: data.care_instructions,
+            orientation: data.orientation || null,
+            tone: data.tone || null,
+            has_frame: data.has_frame || false,
+            size_category: data.size_category || null
         })
         .select()
         .single();
