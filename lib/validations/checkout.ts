@@ -14,9 +14,9 @@ export const checkoutSchema = z.object({
     district: z.string().min(2, "İlçe giriniz").regex(noHtmlRegex, noHtmlMessage),
     zipCode: z.string().min(5, "Posta kodu giriniz").regex(noHtmlRegex, noHtmlMessage),
     cardHolder: z.string().min(5, "Kart üzerindeki ismi giriniz").regex(noHtmlRegex, noHtmlMessage),
-    cardNumber: z.string().regex(/^\d{16}$/, "Kart numarası 16 haneli olmalıdır"),
-    expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, "AA/YY formatında olmalıdır"),
-    cvv: z.string().regex(/^\d{3,4}$/, "CVV 3 veya 4 haneli olmalıdır"),
+    termsAccepted: z.boolean().refine(val => val === true, {
+        message: "Ön bilgilendirme formunu ve mesafeli satış sözleşmesini kabul etmelisiniz"
+    }),
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutSchema>;

@@ -4,6 +4,7 @@ export const SITE_CONFIG = {
     hero: {
         title: "Evinizin Ruhu: Yuvaa",
         description: "El yapımı detaylar, doğal dokular ve bohem esintilerle yaşam alanınıza sıcaklık katın.",
+        buttonText: "Koleksiyonu Keşfet",
         imageUrl: "/images/hero-bg.png" // Ensure this image exists or update path
     },
     footer: {

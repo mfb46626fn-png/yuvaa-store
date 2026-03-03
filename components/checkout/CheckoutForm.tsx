@@ -13,7 +13,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
 import { Loader2 } from "lucide-react";
@@ -29,7 +31,8 @@ const addressFormSchema = checkoutSchema.pick({
     city: true,
     district: true,
     address: true,
-    zipCode: true
+    zipCode: true,
+    termsAccepted: true
 });
 
 type CheckoutFormValues = z.infer<typeof addressFormSchema>;
@@ -50,6 +53,8 @@ export function CheckoutForm() {
             district: "",
             address: "",
             zipCode: "",
+            // @ts-ignore - Checkbox needs boolean but we start empty conceptually, default to false
+            termsAccepted: false,
         },
     });
 
@@ -213,6 +218,27 @@ export function CheckoutForm() {
                                 />
                             </FormControl>
                             <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="termsAccepted"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
+                            <FormControl>
+                                <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                                <FormLabel className="text-sm font-normal text-muted-foreground">
+                                    <Link href="/pre-information-form" target="_blank" className="text-primary hover:underline">Ön Bilgilendirme Formu</Link>'nu ve <Link href="/sales-agreement" target="_blank" className="text-primary hover:underline">Mesafeli Satış Sözleşmesi</Link>'ni okudum ve onaylıyorum.
+                                </FormLabel>
+                                <FormMessage />
+                            </div>
                         </FormItem>
                     )}
                 />
