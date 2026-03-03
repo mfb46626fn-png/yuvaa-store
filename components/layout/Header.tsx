@@ -137,12 +137,18 @@ export function Header() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (
-                        <div className="hidden md:flex items-center gap-2">
-                            <Button variant="ghost" size="sm" asChild>
-                                <Link href="/login">Giriş Yap</Link>
+                        <div className="flex items-center gap-1 sm:gap-2">
+                            <Button variant="ghost" size="sm" className="px-2 sm:px-4 text-xs sm:text-sm" asChild>
+                                <Link href="/login">
+                                    <span className="hidden sm:inline">Giriş Yap</span>
+                                    <span className="sm:hidden">Giriş</span>
+                                </Link>
                             </Button>
-                            <Button size="sm" asChild>
-                                <Link href="/register">Kayıt Ol</Link>
+                            <Button size="sm" className="px-2 sm:px-4 text-xs sm:text-sm" asChild>
+                                <Link href="/register">
+                                    <span className="hidden sm:inline">Kayıt Ol</span>
+                                    <span className="sm:hidden">Kayıt</span>
+                                </Link>
                             </Button>
                         </div>
                     )}
