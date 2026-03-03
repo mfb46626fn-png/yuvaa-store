@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, LogOut, MessagesSquare, Mail } from "lucide-react";
+import { LogOut, LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, MessagesSquare, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { SheetClose } from "@/components/ui/sheet";
 
 const sidebarItems = [
     {
@@ -47,14 +48,14 @@ const sidebarItems = [
     },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ isMobile }: { isMobile?: boolean }) {
     const pathname = usePathname();
 
     return (
         <nav className="space-y-2">
             {sidebarItems.map((item) => {
                 const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
-                return (
+                const linkContent = (
                     <Link
                         key={item.href}
                         href={item.href}
@@ -69,15 +70,23 @@ export function AdminSidebar() {
                         {item.title}
                     </Link>
                 );
+
+                return isMobile ? (
+                    <SheetClose asChild key={item.href}>
+                        {linkContent}
+                    </SheetClose>
+                ) : (
+                    linkContent
+                );
             })}
             <div className="pt-4 mt-4 border-t border-border">
-                <AdminSidebarLogout />
+                <AdminSidebarLogout isMobile={isMobile} />
             </div>
         </nav>
     );
 }
 
-export function AdminSidebarLogout() {
+export function AdminSidebarLogout({ isMobile }: { isMobile?: boolean }) {
     const router = useRouter();
     const supabase = createClient();
 
@@ -92,7 +101,7 @@ export function AdminSidebarLogout() {
         }
     };
 
-    return (
+    const buttonContent = (
         <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
@@ -102,4 +111,6 @@ export function AdminSidebarLogout() {
             Çıkış Yap
         </Button>
     );
+
+    return isMobile ? <SheetClose asChild>{buttonContent}</SheetClose> : buttonContent;
 }
