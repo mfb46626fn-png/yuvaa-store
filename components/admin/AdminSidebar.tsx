@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LogOut, LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, MessagesSquare, Mail } from "lucide-react";
+import { LogOut, LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, MessagesSquare, Mail, Store } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -79,7 +79,26 @@ export function AdminSidebar({ isMobile }: { isMobile?: boolean }) {
                     linkContent
                 );
             })}
-            <div className="pt-4 mt-4 border-t border-border">
+            <div className="pt-4 mt-4 border-t border-border space-y-2">
+                {isMobile ? (
+                    <SheetClose asChild>
+                        <Link
+                            href="/"
+                            className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                        >
+                            <Store size={18} />
+                            Mağazaya Dön
+                        </Link>
+                    </SheetClose>
+                ) : (
+                    <Link
+                        href="/"
+                        className="flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                        <Store size={18} />
+                        Mağazaya Dön
+                    </Link>
+                )}
                 <AdminSidebarLogout isMobile={isMobile} />
             </div>
         </nav>
