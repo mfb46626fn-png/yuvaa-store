@@ -13,12 +13,13 @@ export interface CartItem {
         type: "text" | "image";
         value: string;
     };
+    variant_name?: string;
     cartItemId?: string; // Unique ID for cart management
 }
 
 interface CartState {
     items: CartItem[];
-    addItem: (item: Omit<CartItem, 'quantity'>) => void;
+    addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
     removeItem: (id: string) => void;
     updateQuantity: (id: string, quantity: number) => void;
     clearCart: () => void;
@@ -35,14 +36,15 @@ export const useCart = create<CartState>()(
                 // Find item with same ID AND same personalization
                 const existingItem = currentItems.find((i) =>
                     i.id === item.id &&
+                    i.variant_name === item.variant_name &&
                     JSON.stringify(i.personalization) === JSON.stringify(item.personalization)
                 );
 
                 if (existingItem) {
                     set({
                         items: currentItems.map((i) =>
-                            (i.id === item.id && JSON.stringify(i.personalization) === JSON.stringify(item.personalization))
-                                ? { ...i, quantity: i.quantity + 1 }
+                            (i.id === item.id && i.variant_name === item.variant_name && JSON.stringify(i.personalization) === JSON.stringify(item.personalization))
+                                ? { ...i, quantity: i.quantity + (item.quantity || 1) }
                                 : i
                         ),
                     });
@@ -65,7 +67,7 @@ export const useCart = create<CartState>()(
 
                     const newItem = {
                         ...item,
-                        quantity: 1,
+                        quantity: item.quantity || 1,
                         cartItemId: `${item.id}-${Date.now()}` // Simple unique ID
                     };
                     set({ items: [...currentItems, newItem] });

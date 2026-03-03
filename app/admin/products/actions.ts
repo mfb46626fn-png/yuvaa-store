@@ -48,6 +48,12 @@ function generateSlug(title: string): string {
         .trim();
 }
 
+export interface ProductVariant {
+    name: string;
+    price: number;
+    stock: number;
+}
+
 export interface ProductFormData {
     title: string;
     description: string;
@@ -59,6 +65,7 @@ export interface ProductFormData {
     material: string;
     dimensions: string;
     is_personalized: boolean;
+    variants?: ProductVariant[];
 }
 
 export async function createProduct(data: ProductFormData) {
@@ -79,6 +86,7 @@ export async function createProduct(data: ProductFormData) {
             material: data.material,
             dimensions: data.dimensions,
             is_personalized: data.is_personalized,
+            variants: data.variants || [],
             slug,
         })
         .select()

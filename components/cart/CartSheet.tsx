@@ -104,6 +104,16 @@ export function CartSheet() {
                                                     <p className="text-sm text-muted-foreground">
                                                         {item.price.toLocaleString("tr-TR", { style: "currency", currency: "TRY" })}
                                                     </p>
+                                                    {item.variant_name && (
+                                                        <p className="text-xs font-medium text-foreground mt-0.5">
+                                                            {item.variant_name}
+                                                        </p>
+                                                    )}
+                                                    {item.personalization && (
+                                                        <p className="text-xs text-muted-foreground mt-0.5 italic line-clamp-1">
+                                                            Not: {item.personalization.type === 'text' ? item.personalization.value : "Görsel Eklendi"}
+                                                        </p>
+                                                    )}
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-1 rounded-md border bg-card">

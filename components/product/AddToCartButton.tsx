@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, ShoppingBag } from "lucide-react";
-import { useCart } from "@/hooks/use-cart";
+import { useCart } from "@/lib/stores/cart-store";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
@@ -21,9 +21,10 @@ interface AddToCartButtonProps {
         value: string;
     };
     isPersonalizationRequired?: boolean;
+    variant_name?: string;
 }
 
-export function AddToCartButton({ product, personalization, isPersonalizationRequired }: AddToCartButtonProps) {
+export function AddToCartButton({ product, personalization, isPersonalizationRequired, variant_name }: AddToCartButtonProps) {
     const [quantity, setQuantity] = useState(1);
     const cart = useCart();
 
@@ -54,7 +55,8 @@ export function AddToCartButton({ product, personalization, isPersonalizationReq
             image: product.image,
             quantity: quantity,
             slug: product.slug,
-            personalization: personalization
+            personalization: personalization,
+            variant_name: variant_name
         });
 
         toast.success("Ürün sepete eklendi");

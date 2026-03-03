@@ -9,13 +9,15 @@ export interface CartItem {
     image: string;
     quantity: number;
     custom_note?: string;
+    personalization?: { type: "text" | "image"; value: string; };
+    variant_name?: string;
     slug: string;
 }
 
 interface CartStore {
     items: CartItem[];
     addItem: (data: CartItem) => void;
-    removeItem: (id: string, custom_note?: string) => void; // custom_note ile silme desteği (opsiyonel)
+    removeItem: (id: string, custom_note?: string, variant_name?: string, personalizationValue?: string) => void;
     clearCart: () => void;
 }
 
@@ -25,13 +27,21 @@ export const useCart = create(
             items: [],
             addItem: (data: CartItem) => {
                 const currentItems = get().items;
-                const existingItem = currentItems.find((item) => item.id === data.id && item.custom_note === data.custom_note);
+                const existingItem = currentItems.find((item) =>
+                    item.id === data.id &&
+                    item.custom_note === data.custom_note &&
+                    item.variant_name === data.variant_name &&
+                    item.personalization?.value === data.personalization?.value
+                );
 
                 if (existingItem) {
                     // Miktar artır
                     set({
                         items: currentItems.map((item) =>
-                            (item.id === data.id && item.custom_note === data.custom_note)
+                            (item.id === data.id &&
+                                item.custom_note === data.custom_note &&
+                                item.variant_name === data.variant_name &&
+                                item.personalization?.value === data.personalization?.value)
                                 ? { ...item, quantity: item.quantity + data.quantity }
                                 : item
                         )
@@ -40,11 +50,14 @@ export const useCart = create(
                     set({ items: [...get().items, data] });
                 }
             },
-            removeItem: (id: string, custom_note?: string) => {
-                // Not: Aynı ürün farklı notlarla eklenebilir, bu yüzden sadece ID ile silmek hepsini silebilir. 
-                // Basitlik için ID kontrolü yeterli olabilir ama kişiselleştirme varsa notu da kontrol etmek daha doğru.
+            removeItem: (id: string, custom_note?: string, variant_name?: string, personalizationValue?: string) => {
                 set({
-                    items: get().items.filter((item) => !(item.id === id && item.custom_note === custom_note))
+                    items: get().items.filter((item) => !(
+                        item.id === id &&
+                        item.custom_note === custom_note &&
+                        item.variant_name === variant_name &&
+                        item.personalization?.value === personalizationValue
+                    ))
                 });
             },
             clearCart: () => set({ items: [] }),

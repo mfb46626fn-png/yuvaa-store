@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2, X } from "lucide-react";
+import { ArrowLeft, Loader2, X, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { ImageUpload } from "@/components/ui/image-upload";
 import { Switch } from "@/components/ui/switch";
@@ -38,6 +38,7 @@ interface ProductFormProps {
         category: string;
         images: string[];
         is_personalized: boolean;
+        variants?: { name: string; price: number; stock: number }[];
     };
 }
 
@@ -55,7 +56,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
         inventory: initialData?.inventory?.toString() || "",
         category: initialData?.category || "",
         images: initialData?.images || [] as string[],
-        is_personalized: initialData?.is_personalized || false
+        is_personalized: initialData?.is_personalized || false,
+        variants: initialData?.variants || [] as { name: string; price: number; stock: number }[]
     });
 
     useEffect(() => {
@@ -107,6 +109,28 @@ export function ProductForm({ initialData }: ProductFormProps) {
         }));
     };
 
+    const handleAddVariant = () => {
+        setFormData(prev => ({
+            ...prev,
+            variants: [...prev.variants, { name: "", price: 0, stock: 0 }]
+        }));
+    };
+
+    const handleRemoveVariant = (index: number) => {
+        setFormData(prev => ({
+            ...prev,
+            variants: prev.variants.filter((_, i) => i !== index)
+        }));
+    };
+
+    const handleVariantChange = (index: number, field: string, value: string | number) => {
+        setFormData(prev => {
+            const newVariants = [...prev.variants];
+            newVariants[index] = { ...newVariants[index], [field]: value };
+            return { ...prev, variants: newVariants };
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -125,7 +149,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 inventory: parseInt(formData.inventory) || 0,
                 category: formData.category,
                 images: formData.images,
-                is_personalized: formData.is_personalized
+                is_personalized: formData.is_personalized,
+                variants: formData.variants
             };
 
             if (initialData) {
@@ -320,6 +345,56 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                     value={formData.inventory}
                                     onChange={(e) => setFormData({ ...formData, inventory: e.target.value })}
                                 />
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t">
+                                <div className="flex items-center justify-between">
+                                    <Label className="text-base font-semibold">Varyantlar (İsteğe Bağlı)</Label>
+                                    <Button type="button" variant="outline" size="sm" onClick={handleAddVariant}>
+                                        <Plus className="h-4 w-4 mr-1" /> Ekle
+                                    </Button>
+                                </div>
+                                <p className="text-xs text-muted-foreground">Boyut, renk gibi seçenekler ekleyerek özel fiyatlandırabilirsiniz.</p>
+
+                                {formData.variants.map((variant, index) => (
+                                    <div key={index} className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-end border p-3 rounded-lg bg-muted/20">
+                                        <div className="space-y-1">
+                                            <Label className="text-[10px] mx-1">Seçenek Adı</Label>
+                                            <Input
+                                                placeholder="Örn: 50x70cm"
+                                                value={variant.name}
+                                                onChange={(e) => handleVariantChange(index, "name", e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-1 w-20">
+                                            <Label className="text-[10px] mx-1">Fiyat (₺)</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                value={variant.price || ''}
+                                                onChange={(e) => handleVariantChange(index, "price", parseFloat(e.target.value) || 0)}
+                                            />
+                                        </div>
+                                        <div className="space-y-1 w-16">
+                                            <Label className="text-[10px] mx-1">Stok</Label>
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                value={variant.stock || ''}
+                                                onChange={(e) => handleVariantChange(index, "stock", parseInt(e.target.value) || 0)}
+                                            />
+                                        </div>
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-destructive hover:bg-destructive/10"
+                                            onClick={() => handleRemoveVariant(index)}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
                             </div>
 
                             <div className="flex items-center justify-between rounded-lg border p-3">

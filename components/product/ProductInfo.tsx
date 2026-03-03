@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createClient } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
@@ -44,6 +45,7 @@ interface ProductInfoProps {
         category: string;
         categories?: any;
         is_personalized?: boolean;
+        variants?: { name: string; price: number; stock: number; }[];
     };
 }
 
@@ -54,11 +56,28 @@ export function ProductInfo({ product }: ProductInfoProps) {
     const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
     const [isUploading, setIsUploading] = useState(false);
 
-    const discountPercentage = product.sale_price
-        ? Math.round(((product.price - product.sale_price) / product.price) * 100)
+    // Default to the first variant if variants exist
+    const [selectedVariantIndex, setSelectedVariantIndex] = useState<number | null>(
+        product.variants && product.variants.length > 0 ? 0 : null
+    );
+
+    const currentPrice = selectedVariantIndex !== null && product.variants
+        ? product.variants[selectedVariantIndex].price
+        : product.price;
+
+    const currentSalePrice = selectedVariantIndex !== null && product.variants
+        ? null // Variants don't support sale_price by default in this implementation
+        : product.sale_price;
+
+    const currentStock = selectedVariantIndex !== null && product.variants
+        ? product.variants[selectedVariantIndex].stock
+        : product.stock_quantity;
+
+    const discountPercentage = currentSalePrice
+        ? Math.round(((currentPrice - currentSalePrice) / currentPrice) * 100)
         : null;
 
-    const inStock = product.stock_quantity > 0;
+    const inStock = currentStock > 0;
     const categorySlug = product.category || (product.categories?.slug) || "ev-dekorasyon";
     const categoryTitle = getCategoryTitle(categorySlug);
 
@@ -135,18 +154,18 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
                 <div className="flex items-center gap-4">
                     <div className="flex items-baseline gap-3">
-                        {product.sale_price ? (
+                        {currentSalePrice ? (
                             <>
                                 <span className="text-3xl font-semibold text-primary">
-                                    ₺{product.sale_price.toLocaleString("tr-TR")}
+                                    ₺{currentSalePrice.toLocaleString("tr-TR")}
                                 </span>
                                 <span className="text-xl text-muted-foreground line-through decoration-1">
-                                    ₺{product.price.toLocaleString("tr-TR")}
+                                    ₺{currentPrice.toLocaleString("tr-TR")}
                                 </span>
                             </>
                         ) : (
                             <span className="text-3xl font-semibold text-primary">
-                                ₺{product.price.toLocaleString("tr-TR")}
+                                ₺{currentPrice.toLocaleString("tr-TR")}
                             </span>
                         )}
                     </div>
@@ -163,6 +182,31 @@ export function ProductInfo({ product }: ProductInfoProps) {
             <p className="text-muted-foreground text-lg leading-relaxed line-clamp-3">
                 {product.description}
             </p>
+
+            {/* Options / Variants */}
+            {product.variants && product.variants.length > 0 && (
+                <div className="space-y-4 pt-4 border-t">
+                    <Label className="text-base font-semibold">Seçenekler</Label>
+                    <div className="flex flex-wrap gap-2">
+                        {product.variants.map((variant, index) => (
+                            <Button
+                                key={index}
+                                type="button"
+                                variant={selectedVariantIndex === index ? "default" : "outline"}
+                                className={cn(
+                                    "rounded-full px-6 transition-all",
+                                    selectedVariantIndex === index && "ring-2 ring-primary ring-offset-2"
+                                )}
+                                onClick={() => setSelectedVariantIndex(index)}
+                                disabled={variant.stock <= 0}
+                            >
+                                {variant.name}
+                                {variant.stock <= 0 ? " (Tükendi)" : ""}
+                            </Button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Personalization Section */}
             {product.is_personalized && (
@@ -245,13 +289,14 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 <AddToCartButton product={{
                     id: product.id,
                     title: product.title,
-                    price: product.sale_price || product.price,
+                    price: currentSalePrice || currentPrice,
                     image: product.images[0] || "/images/placeholder.png",
                     slug: product.slug,
-                    stock_quantity: product.stock_quantity
+                    stock_quantity: currentStock
                 }}
                     personalization={getPersonalizationData()}
                     isPersonalizationRequired={personalizationEnabled}
+                    variant_name={selectedVariantIndex !== null && product.variants ? product.variants[selectedVariantIndex].name : undefined}
                 />
             </div>
 
