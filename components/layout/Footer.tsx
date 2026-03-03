@@ -73,6 +73,16 @@ export function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/pre-information-form" className="hover:text-primary transition-colors">
+                                    Ön Bilgilendirme Formu
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/kvkk" className="hover:text-primary transition-colors">
+                                    KVKK Aydınlatma Metni
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/refund-policy" className="hover:text-primary transition-colors">
                                     İade ve İptal Koşulları
                                 </Link>
