@@ -18,7 +18,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Truck, ShieldCheck, Undo2, Upload, Type, Image as ImageIcon, Loader2, X } from "lucide-react";
+import { Check, ShieldCheck, Truck, Undo2, X, AlertTriangle, Info, Upload, Type, Image as ImageIcon, Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -378,6 +378,30 @@ export function ProductInfo({ product }: ProductInfoProps) {
                         </AccordionContent>
                     </AccordionItem>
                 )}
+
+                <AccordionItem value="delivery" className="border-t border-b-0">
+                    <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
+                        Teslimat ve Hasar İşlemleri
+                    </AccordionTrigger>
+                    <AccordionContent className="px-5 pb-5 pt-2">
+                        <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-900/50 p-4 rounded-lg flex items-start gap-3">
+                            <div className="text-orange-600 dark:text-orange-400 mt-0.5 shrink-0">
+                                <AlertTriangle className="h-5 w-5" />
+                            </div>
+                            <div className="space-y-3 text-sm text-foreground/80 leading-relaxed">
+                                <p>
+                                    <strong className="text-foreground font-semibold">Kargonuzu teslim alırken dikkat etmeniz gerekenler:</strong>
+                                </p>
+                                <ul className="list-disc list-inside space-y-1 ml-1">
+                                    <li>Lütfen paketinizde kargo kaynaklı bir yırtık, ezilme veya ıslanma olup olmadığını kurye yanındayken kontrol ediniz.</li>
+                                    <li>Pakette dışarıdan belli olan bir hasar varsa kuryeye <strong>"Hasar Tespit Tutanağı"</strong> tutturarak paketi teslim almayınız.</li>
+                                    <li>Paketi açtıktan sonra üründe onarılamaz bir hasar fark ederseniz vakit kaybetmeden <strong>WhatsApp destek hattımızdan</strong> (+90 505 254 77 86) fotoğraflarıyla birlikte bize ulaşınız.</li>
+                                </ul>
+                                <p className="text-xs text-muted-foreground mt-2">Tüm gönderilerimiz kırılma ve darbelere karşı ekstra korumalı olarak özenle paketlenmektedir.</p>
+                            </div>
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
             </Accordion>
         </div>
     );
