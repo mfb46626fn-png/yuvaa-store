@@ -11,7 +11,9 @@ export const SITE_CONFIG = {
         copyright: "© 2024 Yuvaa Store. Tüm hakları saklıdır.",
         socials: {
             instagram: "https://instagram.com/yuvaastore",
-            twitter: "https://twitter.com/yuvaastore"
+            twitter: "https://twitter.com/yuvaastore",
+            whatsapp_number: "905000000000", // Kullanıcı numarasını buraya girecek (Örn: 905321234567)
+            whatsapp_message: "Merhaba, ürünleriniz hakkında bilgi almak istiyorum."
         }
     }
 };
