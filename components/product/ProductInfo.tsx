@@ -329,12 +329,12 @@ export function ProductInfo({ product }: ProductInfoProps) {
                         </div>
                     </AccordionContent>
                 </AccordionItem>
-                {(product.material || product.dimensions) && (
-                    <AccordionItem value="details" className="border-t border-b-0">
-                        <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
-                            Malzeme ve Boyutlar
-                        </AccordionTrigger>
-                        <AccordionContent className="px-5 pb-5 pt-2">
+                <AccordionItem value="details" className="border-t border-b-0">
+                    <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
+                        Malzeme ve Boyutlar
+                    </AccordionTrigger>
+                    <AccordionContent className="px-5 pb-5 pt-2">
+                        {(product.material || product.dimensions) && (
                             <div className="grid grid-cols-2 gap-6 bg-muted/30 p-4 rounded-lg">
                                 {product.material && (
                                     <div className="space-y-1.5">
@@ -349,9 +349,21 @@ export function ProductInfo({ product }: ProductInfoProps) {
                                     </div>
                                 )}
                             </div>
-                        </AccordionContent>
-                    </AccordionItem>
-                )}
+                        )}
+
+                        {!product.dimensions && (
+                            <div className="mt-4 bg-primary/5 border border-primary/20 p-3 rounded-lg flex items-start gap-3">
+                                <div className="text-primary mt-0.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                                </div>
+                                <p className="text-xs text-foreground/80 leading-relaxed">
+                                    <span className="font-semibold block mb-0.5">Ölçü/Ton Teyidi</span>
+                                    Ölçüsü net belirtilmeyen (doğal formlu) ürünlerimizde, siparişiniz sonrasında ekibimiz sizinle WhatsApp üzerinden iletişime geçerek ölçü, renk tonu ve form teyidi alacaktır.
+                                </p>
+                            </div>
+                        )}
+                    </AccordionContent>
+                </AccordionItem>
                 {product.care_instructions && (
                     <AccordionItem value="care" className="border-t border-b-0">
                         <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
