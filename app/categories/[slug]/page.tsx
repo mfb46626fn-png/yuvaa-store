@@ -2,7 +2,6 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
-import { CATEGORIES, getCategoryTitle } from "@/lib/constants";
 
 interface PageProps {
     params: Promise<{
@@ -12,7 +11,13 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    const category = CATEGORIES.find(c => c.slug === slug);
+    const supabase = await createServerSupabaseClient();
+
+    const { data: category } = await supabase
+        .from("categories")
+        .select("title")
+        .eq("slug", slug)
+        .single();
 
     if (!category) {
         return {
@@ -30,8 +35,12 @@ export default async function CategoryPage({ params }: PageProps) {
     const { slug } = await params;
     const supabase = await createServerSupabaseClient();
 
-    // 1. Get Category from Static Data
-    const category = CATEGORIES.find(c => c.slug === slug);
+    // 1. Get Category from DB
+    const { data: category } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("slug", slug)
+        .single();
 
     if (!category) {
         notFound();

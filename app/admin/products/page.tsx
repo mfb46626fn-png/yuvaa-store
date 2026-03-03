@@ -26,7 +26,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import Image from "next/image";
 
-import { getCategoryTitle } from "@/lib/constants";
+
 import { deleteProduct } from "./actions";
 
 type Product = {
@@ -41,6 +41,7 @@ type Product = {
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<Record<string, string>>({});
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
     const [supabase] = useState(() => createClient());
@@ -52,6 +53,14 @@ export default function AdminProductsPage() {
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
+            // Fetch categories to map slugs to titles
+            const { data: catData } = await supabase.from("categories").select("slug, title");
+            if (catData) {
+                const catMap: Record<string, string> = {};
+                catData.forEach(c => catMap[c.slug] = c.title);
+                setCategories(catMap);
+            }
+
             const { data, error } = await supabase
                 .from("products")
                 .select("*")
@@ -149,7 +158,7 @@ export default function AdminProductsPage() {
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="outline">{getCategoryTitle(product.category)}</Badge>
+                                    <Badge variant="outline">{categories[product.category] || product.category}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     <div className="flex items-center gap-2">

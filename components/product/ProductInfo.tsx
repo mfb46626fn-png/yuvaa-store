@@ -19,7 +19,6 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Truck, ShieldCheck, Undo2, Upload, Type, Image as ImageIcon, Loader2, X } from "lucide-react";
-import { getCategoryTitle } from "@/lib/constants";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -80,7 +79,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
     const inStock = currentStock > 0;
     const categorySlug = product.category || (product.categories?.slug);
-    const categoryTitle = categorySlug ? getCategoryTitle(categorySlug) : "Tüm Ürünler";
+    const categoryTitle = product.categories?.title || product.categories?.name || "Tüm Ürünler";
     const categoryLink = categorySlug ? `/categories/${categorySlug}` : "/products";
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

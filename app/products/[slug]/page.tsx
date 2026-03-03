@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { Metadata } from "next";
-import { CATEGORIES } from "@/lib/constants";
 import { MobileStickyBar } from "@/components/product/MobileStickyBar";
 
 interface PageProps {
@@ -51,8 +50,16 @@ export default async function ProductPage({ params }: PageProps) {
         notFound();
     }
 
-    // Find category from static constants
-    const category = CATEGORIES.find(c => c.slug === product.category);
+    // 2. Fetch Category from DB instead of constants
+    let category = null;
+    if (product.category) {
+        const { data: catData } = await supabase
+            .from("categories")
+            .select("title, slug")
+            .eq("slug", product.category)
+            .single();
+        category = catData;
+    }
 
     const formattedProduct = {
         ...product,
@@ -60,7 +67,7 @@ export default async function ProductPage({ params }: PageProps) {
         stock_quantity: product.inventory,
         // Ensure category matches what components expect (string for slug)
         category: product.category || "ev-dekorasyon",
-        categories: category || { name: "Ev Dekorasyon", slug: "ev-dekorasyon" }
+        categories: category || { title: "Tüm Ürünler", name: "Tüm Ürünler", slug: "tum-urunler" }
     };
 
     return (
