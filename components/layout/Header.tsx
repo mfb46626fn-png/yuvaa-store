@@ -7,6 +7,7 @@ import { CartSheet } from "@/components/cart/CartSheet";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { Search, User, LogOut, ShoppingBag, LayoutDashboard, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GlobalSearch } from "@/components/ui/global-search";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
     DropdownMenu,
@@ -79,9 +80,11 @@ export function Header() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary">
-                        <Search size={20} />
-                    </Button>
+                    <GlobalSearch triggerButton={
+                        <Button variant="ghost" size="icon" className="hidden sm:flex hover:text-primary">
+                            <Search size={20} />
+                        </Button>
+                    } />
 
                     <CartSheet />
 

@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu, Loader2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { GlobalSearch } from "@/components/ui/global-search";
 import {
     Sheet,
     SheetContent,
@@ -69,15 +70,12 @@ export function MobileNav() {
 
                         {/* Search (Mobile) */}
                         <div className="px-2 pb-4 mb-2 border-b border-border/50">
-                            <form action="/products" className="relative">
-                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                <input
-                                    type="search"
-                                    name="q"
-                                    placeholder="Ürün ara..."
-                                    className="w-full bg-muted/50 border border-border rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                                />
-                            </form>
+                            <GlobalSearch triggerButton={
+                                <Button variant="outline" className="w-full justify-start text-muted-foreground bg-muted/50 border-border">
+                                    <Search className="mr-2 h-4 w-4" />
+                                    Ürün ara...
+                                </Button>
+                            } />
                         </div>
 
                         {/* Static Categories */}
