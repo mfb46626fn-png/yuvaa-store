@@ -79,8 +79,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
         : null;
 
     const inStock = currentStock > 0;
-    const categorySlug = product.category || (product.categories?.slug) || "ev-dekorasyon";
-    const categoryTitle = getCategoryTitle(categorySlug);
+    const categorySlug = product.category || (product.categories?.slug);
+    const categoryTitle = categorySlug ? getCategoryTitle(categorySlug) : "Tüm Ürünler";
+    const categoryLink = categorySlug ? `/categories/${categorySlug}` : "/products";
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -138,7 +139,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbLink href={`/categories/${categorySlug}`}>{categoryTitle}</BreadcrumbLink>
+                        <BreadcrumbLink href={categoryLink}>{categoryTitle}</BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
