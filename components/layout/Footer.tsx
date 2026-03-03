@@ -84,17 +84,16 @@ export function Footer() {
                     <div className="space-y-4">
                         <h4 className="font-semibold text-foreground">İletişim</h4>
                         <address className="not-italic leading-relaxed">
-                            Bağdat Caddesi No:123<br />
-                            Kadıköy, İstanbul<br />
+                            Aydın, Nazilli<br />
                             Türkiye
                         </address>
                         <p>info@yuvaastore.com</p>
-                        <p>+90 (216) 555 00 00</p>
+                        <p>+90 505 254 77 86</p>
                     </div>
                 </div>
 
                 <div className="border-t border-border pt-8 text-center">
-                    <p>&copy; {new Date().getFullYear()} Yuvaa Store. Tüm hakları saklıdır.</p>
+                    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
                 </div>
             </div>
         </footer>

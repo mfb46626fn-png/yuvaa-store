@@ -70,7 +70,7 @@ Bu şablon, yeni kayıt olan kullanıcıların hesabını doğrulaması içindir
   </div>
   
   <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
     <p>Bu e-postayı siz talep etmediyseniz, görmezden gelebilirsiniz.</p>
   </div>
 </div>
@@ -107,7 +107,7 @@ Bu şablon, "Şifremi Unuttum" diyen kullanıcılara gidecektir. Bu da `yuvaasto
   </div>
   
   <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
   </div>
 </div>
 
@@ -143,7 +143,7 @@ Kullanıcı e-posta adresini değiştirmek istediğinde ona gidecek onay mailidi
   </div>
   
   <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
   </div>
 </div>
 
@@ -179,7 +179,7 @@ Kullanıcı şifresini başarıyla değiştirdikten sonra giden bilgilendirme me
   </div>
   
   <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
   </div>
 </div>
 
@@ -215,7 +215,7 @@ E-posta değişimi başarıyla tamamlandığında eski/yeni adrese giden genel b
   </div>
   
   <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
   </div>
 </div>
 
@@ -251,6 +251,6 @@ Supabase Auth üzerinden telefon güncellemesi yapıldığında giden mesajdır 
   </div>
   
   <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
-    <p>&copy; 2024 Yuvaa Store. Tüm hakları saklıdır.</p>
+    <p>&copy; 2026 Yuvaa Store. Tüm hakları saklıdır.</p>
   </div>
 </div>

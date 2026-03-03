@@ -17,8 +17,8 @@ export default function SalesAgreementPage() {
                     <p className="font-semibold text-foreground">MADDE 2 - SATICI BİLGİLERİ</p>
                     <p>
                         Ünvanı: Yuvaa Store (Bundan sonra SATICI olarak anılacaktır)<br />
-                        Adres: Bağdat Caddesi No:123, Kadıköy, İstanbul<br />
-                        Telefon: +90 (216) 555 00 00<br />
+                        Adres: Aydın, Nazilli, Türkiye<br />
+                        Telefon: 0505 254 77 86<br />
                         E-posta: info@yuvaastore.com
                     </p>
 

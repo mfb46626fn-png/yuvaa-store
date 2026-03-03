@@ -27,7 +27,7 @@ export default function AboutPage() {
 
                 <div className="prose prose-stone mx-auto">
                     <p>
-                        2024 yılında İstanbul'da, küçük bir atölyede filizlenen hayalimiz, bugün evlerinize konuk olan bir marka haline geldi.
+                        2026 yılında Aydın, Nazilli'de, küçük bir atölyede filizlenen hayalimiz, bugün evlerinize konuk olan bir marka haline geldi.
                         Yuvaa olarak biz, seri üretimden uzak, her biri ustaların elinde şekillenen, hikayesi olan ürünlere inanıyoruz.
                     </p>
                     <p>

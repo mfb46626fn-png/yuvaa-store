@@ -77,9 +77,8 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">Adres</h3>
                                     <p className="text-muted-foreground leading-relaxed">
-                                        Bağdat Caddesi No:123<br />
-                                        Suadiye, Kadıköy<br />
-                                        İstanbul, 34740
+                                        Aydın, Nazilli<br />
+                                        Türkiye
                                     </p>
                                 </div>
                             </div>
@@ -92,8 +91,8 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">Telefon</h3>
                                     <p className="text-muted-foreground mb-1">
-                                        <a href="tel:08505550000" className="hover:text-primary transition-colors">
-                                            0850 555 00 00
+                                        <a href="tel:+905052547786" className="hover:text-primary transition-colors">
+                                            0505 254 77 86
                                         </a>
                                     </p>
                                     <p className="text-xs text-muted-foreground">Hafta içi: 09:00 - 18:00</p>
@@ -108,8 +107,8 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">E-Posta</h3>
                                     <p className="text-muted-foreground">
-                                        <a href="mailto:destek@yuvaastore.com" className="hover:text-primary transition-colors">
-                                            destek@yuvaastore.com
+                                        <a href="mailto:info@yuvaastore.com" className="hover:text-primary transition-colors">
+                                            info@yuvaastore.com
                                         </a>
                                     </p>
                                 </div>
