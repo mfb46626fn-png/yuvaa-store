@@ -19,7 +19,7 @@ export default function Home() {
                 {/* Categories - Visual heavy distinct section */}
                 <section className="relative z-10 -mt-20 md:-mt-32 pb-10">
                     <div className="rounded-t-[3rem] bg-background pt-16 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
-                        <CategoryList />
+                        <CategoryList limit={4} />
                     </div>
                 </section>
 

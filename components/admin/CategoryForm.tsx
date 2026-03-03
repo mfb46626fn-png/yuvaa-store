@@ -15,7 +15,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ImageDropzone } from "@/components/admin/ImageDropzone";
 import { createClient } from "@/lib/supabase";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
@@ -109,63 +108,42 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid gap-8 md:grid-cols-2">
-                    <div className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="title"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Kategori Adı</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            placeholder="Örn: Ev Dekorasyon"
-                                            {...field}
-                                            onChange={(e) => {
-                                                field.onChange(e);
-                                                handleTitleChange(e);
-                                            }}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-2xl">
+                <div className="space-y-8">
+                    <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Kategori Adı</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Örn: Ev Dekorasyon"
+                                        {...field}
+                                        onChange={(e) => {
+                                            field.onChange(e);
+                                            handleTitleChange(e);
+                                        }}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
 
-                        <FormField
-                            control={form.control}
-                            name="slug"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>URL Bağlantısı (Slug)</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="orn-ev-dekorasyon" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
-                    <div className="space-y-8">
-                        <FormField
-                            control={form.control}
-                            name="image_url"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Kategori Görseli</FormLabel>
-                                    <FormControl>
-                                        <ImageDropzone
-                                            onImagesChange={(urls) => field.onChange(urls[0])}
-                                            existingImages={field.value ? [field.value] : []}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="slug"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>URL Bağlantısı (Slug)</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="orn-ev-dekorasyon" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
 
                 <div className="flex gap-4">

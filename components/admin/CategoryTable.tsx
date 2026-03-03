@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -77,7 +76,6 @@ export function CategoryTable({ categories }: CategoryTableProps) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px]">Görsel</TableHead>
                             <TableHead>Başlık</TableHead>
                             <TableHead>Slug (Link)</TableHead>
                             <TableHead className="text-right">İşlemler</TableHead>
@@ -86,22 +84,6 @@ export function CategoryTable({ categories }: CategoryTableProps) {
                     <TableBody>
                         {categories.map((category) => (
                             <TableRow key={category.id}>
-                                <TableCell>
-                                    <div className="relative w-12 h-12 rounded-md overflow-hidden bg-muted">
-                                        {category.image_url ? (
-                                            <Image
-                                                src={category.image_url}
-                                                alt={category.title}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="flex items-center justify-center h-full text-xs text-muted-foreground">
-                                                No Img
-                                            </div>
-                                        )}
-                                    </div>
-                                </TableCell>
                                 <TableCell className="font-medium">{category.title}</TableCell>
                                 <TableCell className="text-muted-foreground">{category.slug}</TableCell>
                                 <TableCell className="text-right">
@@ -136,7 +118,7 @@ export function CategoryTable({ categories }: CategoryTableProps) {
                         ))}
                         {categories.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan={4} className="h-24 text-center">
+                                <TableCell colSpan={3} className="h-24 text-center">
                                     Henüz kategori bulunmuyor.
                                 </TableCell>
                             </TableRow>

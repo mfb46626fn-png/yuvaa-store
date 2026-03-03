@@ -4,13 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
-export async function CategoryList() {
+interface CategoryListProps {
+    limit?: number;
+}
+
+export async function CategoryList({ limit }: CategoryListProps) {
     const supabase = await createServerSupabaseClient();
-    const { data: categories } = await supabase
-        .from("categories")
-        .select("*")
-        .order("title")
-        .limit(4);
+    let query = supabase.from("categories").select("*").order("title");
+
+    if (limit) {
+        query = query.limit(limit);
+    }
+
+    const { data: categories } = await query;
 
     return (
         <section className="container mx-auto py-16 px-4 md:px-6">
@@ -30,29 +36,16 @@ export async function CategoryList() {
                     <Link
                         key={category.id}
                         href={`/categories/${category.slug}`}
-                        className="group relative flex flex-col gap-3"
+                        className="group relative flex items-center justify-center p-6 sm:p-8 aspect-square overflow-hidden rounded-[2rem] border border-border/50 bg-muted/30 hover:bg-primary/5 transition-all duration-500 hover:shadow-lg hover:-translate-y-1"
                     >
-                        <div className="aspect-square overflow-hidden rounded-2xl border border-border bg-muted/20">
-                            <div className="relative h-full w-full transition-transform duration-500 group-hover:scale-105">
-                                {category.image_url ? (
-                                    <Image
-                                        src={category.image_url}
-                                        alt={category.title}
-                                        fill
-                                        className="object-cover"
-                                        sizes="(max-width: 768px) 50vw, 25vw"
-                                    />
-                                ) : (
-                                    <div className="flex h-full w-full items-center justify-center bg-secondary text-muted-foreground">
-                                        No IMG
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className="text-center">
-                            <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
+                        {/* Soft decorative background glow effect on hover */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                        <div className="text-center relative z-10 px-2">
+                            <h3 className="font-serif text-xl sm:text-2xl md:text-3xl text-foreground group-hover:text-primary transition-colors font-medium">
                                 {category.title}
                             </h3>
+                            <div className="mt-4 h-0.5 w-8 bg-primary/20 mx-auto group-hover:w-16 group-hover:bg-primary/50 transition-all duration-500 rounded-full"></div>
                         </div>
                     </Link>
                 ))}
