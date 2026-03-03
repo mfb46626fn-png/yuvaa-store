@@ -19,7 +19,7 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Check, ShieldCheck, Truck, Undo2, X, AlertTriangle, Info, Upload, Type, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Check, ShieldCheck, Truck, Undo2, X, AlertTriangle, Info, Upload, Type, Image as ImageIcon, Loader2, Clock, Smartphone, CheckCircle2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -399,6 +399,65 @@ export function ProductInfo({ product }: ProductInfoProps) {
                                     <li>Paketi açtıktan sonra üründe onarılamaz bir hasar fark ederseniz vakit kaybetmeden <strong>WhatsApp destek hattımızdan</strong> (+90 505 254 77 86) fotoğraflarıyla birlikte bize ulaşınız.</li>
                                 </ul>
                                 <p className="text-xs text-muted-foreground mt-2">Tüm gönderilerimiz kırılma ve darbelere karşı ekstra korumalı olarak özenle paketlenmektedir.</p>
+                            </div>
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="process" className="border-t border-b border-b-border/30">
+                    <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
+                        Sipariş ve Onay Süreci
+                    </AccordionTrigger>
+                    <AccordionContent className="px-5 pb-5 pt-2">
+                        <div className="space-y-4">
+                            <p className="text-sm text-foreground/80 mb-2">
+                                Tüm siparişleriniz kalite standartlarımız gereği özenli bir onay sürecinden geçmektedir:
+                            </p>
+
+                            <div className="relative pl-6 border-l-2 border-primary/20 space-y-5">
+                                {/* Step 1 */}
+                                <div className="relative">
+                                    <div className="absolute -left-[33px] top-0.5 bg-background p-1 border-2 border-primary rounded-full">
+                                        <Clock className="w-3.5 h-3.5 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-sm">1. Sipariş Alınması</h4>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Siparişiniz sistemimize başarıyla düşer ve hazırlık kuyruğuna alınır.
+                                    </p>
+                                </div>
+
+                                {/* Step 2 */}
+                                <div className="relative">
+                                    <div className="absolute -left-[33px] top-0.5 bg-background p-1 border-2 border-primary rounded-full">
+                                        <Smartphone className="w-3.5 h-3.5 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-sm">2. WhatsApp Üzerinden Teyit</h4>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Ekibimiz seçtiğiniz ürünün ölçüsü, renk tonu veya kişiselleştirmeleri hakkında netlik sağlamak için sizinle WhatsApp üzerinden iletişime geçer.
+                                    </p>
+                                </div>
+
+                                {/* Step 3 */}
+                                <div className="relative">
+                                    <div className="absolute -left-[33px] top-0.5 bg-background p-1 border-2 border-primary rounded-full">
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-sm">3. Üretim ve Onay</h4>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Sizden alınan teyit sonrası ürününüzün tedarik ve/veya kişiselleştirme aşamasına geçilir.
+                                    </p>
+                                </div>
+
+                                {/* Step 4 */}
+                                <div className="relative">
+                                    <div className="absolute -left-[33px] top-0.5 bg-background p-1 border-2 border-primary rounded-full">
+                                        <Truck className="w-3.5 h-3.5 text-primary" />
+                                    </div>
+                                    <h4 className="font-semibold text-sm">4. Tedarik ve Kargo</h4>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Son kontrolleri yapılan ürününüz özenle paketlenir ve kargoya teslim edilerek takip numarası SMS/Mail ile paylaşılır.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </AccordionContent>
