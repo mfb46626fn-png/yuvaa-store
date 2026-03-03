@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/use-cart";
@@ -41,6 +41,47 @@ export function CheckoutForm() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const cart = useCart();
+
+    // Log "begin_checkout" event
+    useEffect(() => {
+        const trackCheckoutStart = async () => {
+            if (cart.items.length === 0) return;
+
+            try {
+                // We use cart-store initSession here since we don't expose it directly in use-cart hook,
+                // Alternatively we can just read it from localStorage if needed, 
+                // but the cleanest way is calling the API.
+
+                // Read from localstorage cart-storage directly for session if use-cart doesn't expose it
+                const storageRaw = localStorage.getItem('cart-storage');
+                if (storageRaw) {
+                    const parsed = JSON.parse(storageRaw);
+                    const session = parsed?.state?.sessionId;
+
+                    if (session) {
+                        await fetch('/api/analytics/track', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                event_type: 'begin_checkout',
+                                session_id: session,
+                                event_data: {
+                                    cartTotal: cart.items.reduce((total, item) => total + item.price * item.quantity, 0),
+                                    items: cart.items.length
+                                },
+                                path: window.location.pathname
+                            })
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Analytics failed", e);
+            }
+        };
+
+        trackCheckoutStart();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const form = useForm<CheckoutFormValues>({
         resolver: zodResolver(addressFormSchema),
@@ -141,7 +182,31 @@ export function CheckoutForm() {
                             <FormItem>
                                 <FormLabel>E-posta</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="ornek@email.com" {...field} />
+                                    <Input
+                                        placeholder="ornek@email.com"
+                                        {...field}
+                                        onBlur={(e) => {
+                                            field.onBlur(); // Standard rhf blur
+                                            if (e.target.value && e.target.value.includes('@')) {
+                                                const storageRaw = localStorage.getItem('cart-storage');
+                                                if (storageRaw) {
+                                                    const session = JSON.parse(storageRaw)?.state?.sessionId;
+                                                    if (session) {
+                                                        fetch('/api/analytics/track', {
+                                                            method: 'POST',
+                                                            headers: { 'Content-Type': 'application/json' },
+                                                            body: JSON.stringify({
+                                                                event_type: 'checkout_contact_entered',
+                                                                session_id: session,
+                                                                event_data: { email: e.target.value },
+                                                                path: window.location.pathname
+                                                            })
+                                                        }).catch(err => console.error("Could not log contact", err));
+                                                    }
+                                                }
+                                            }
+                                        }}
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

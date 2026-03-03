@@ -14,7 +14,8 @@ import {
     Store,
     Mail,
     Package,
-    RotateCcw
+    RotateCcw,
+    LineChart
 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
@@ -47,6 +48,11 @@ const sidebarItems = [
         title: "İadeler",
         href: "/admin/returns",
         icon: RotateCcw,
+    },
+    {
+        title: "Analitik",
+        href: "/admin/analytics",
+        icon: LineChart,
     },
     {
         title: "Yorum Yönetimi",

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface CartItem {
     id: string;
@@ -19,20 +20,54 @@ export interface CartItem {
 
 interface CartState {
     items: CartItem[];
+    sessionId: string | null;
     addItem: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
     removeItem: (id: string) => void;
     updateQuantity: (id: string, quantity: number) => void;
     clearCart: () => void;
     getCartTotal: () => number;
     getItemCount: () => number;
+    initSession: () => string;
 }
+
+// Helper to track events
+const trackEvent = async (eventType: string, sessionId: string, data: any = {}) => {
+    try {
+        await fetch('/api/analytics/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                event_type: eventType,
+                session_id: sessionId,
+                event_data: data,
+                path: typeof window !== 'undefined' ? window.location.pathname : ''
+            })
+        });
+    } catch (e) {
+        console.error("Failed to track event", e);
+    }
+};
 
 export const useCart = create<CartState>()(
     persist(
         (set, get) => ({
             items: [],
+            sessionId: null,
+            initSession: () => {
+                let currentSession = get().sessionId;
+                if (!currentSession) {
+                    currentSession = uuidv4();
+                    set({ sessionId: currentSession });
+                }
+                return currentSession;
+            },
             addItem: (item) => {
                 const currentItems = get().items;
+                const activeSession = get().initSession();
+
+                // Track analytics
+                trackEvent('add_to_cart', activeSession, { product: item });
+
                 // Find item with same ID AND same personalization
                 const existingItem = currentItems.find((i) =>
                     i.id === item.id &&
@@ -49,22 +84,6 @@ export const useCart = create<CartState>()(
                         ),
                     });
                 } else {
-                    // Create a unique ID for the cart item if it has personalization to allow removing specific variation
-                    // Actually, modifying `id` might break things if we rely on it being product_id.
-                    // Better approach: removeItem and updateQuantity should rely on an internal `cartItemId` or index, 
-                    // OR we just rely on the combination.
-                    // For this quick implementation, we will keep product ID but logic above handles adding separate entries? 
-                    // No, `find` above returns the first match. If I add Item A (Text: "Hi") and then Item A (Text: "Bye"),
-                    // the first find fails (good), so it adds a new item.
-                    // BUT `removeItem` works by `id`. If I remove Item A, it might remove both or wrong one.
-                    // We need to generate a unique instance ID for cart items or check personalization in remove.
-
-                    // Let's generate a temporary unique ID for the cart item itself to be safe, 
-                    // but `CartItem.id` is usually expected to be Product ID for links.
-                    // Let's add `cartItemId` to CartItem interface?
-                    // Refactoring to add `cartItemId` is safer but bigger change.
-                    // Let's use a composite key approach for remove/update or just add a `uuid` field.
-
                     const newItem = {
                         ...item,
                         quantity: item.quantity || 1,
@@ -74,10 +93,7 @@ export const useCart = create<CartState>()(
                 }
             },
             removeItem: (cartItemId) => {
-                // We need to update removeItem signature to accept cartItemId or handle logic
                 set({ items: get().items.filter((i) => (i as any).cartItemId !== cartItemId && i.id !== cartItemId) });
-                // Fallback: if id matches and no cartItemId (legacy items), remove it? 
-                // Transitioning: New items have cartItemId.
             },
             updateQuantity: (cartItemId, quantity) => {
                 const { items } = get();
@@ -91,7 +107,7 @@ export const useCart = create<CartState>()(
                     ),
                 });
             },
-            clearCart: () => set({ items: [] }),
+            clearCart: () => set({ items: [], sessionId: null }), // Reset session on clear/purchase
             getCartTotal: () => {
                 return get().items.reduce(
                     (total, item) => total + item.price * item.quantity,

@@ -4,7 +4,8 @@ import {
     getTicketCreatedAdminTemplate,
     getTicketReplyTemplate,
     getTicketStatusTemplate,
-    getOrderStatusTemplate
+    getOrderStatusTemplate,
+    getAbandonedCartTemplate
 } from './email-templates';
 
 // Only initialize if API key is present to prevent build errors
@@ -102,5 +103,21 @@ export async function sendOrderStatusEmail(
         to: userEmail,
         subject: `${subjectPrefix} - Yuvaa Store`,
         html: getOrderStatusTemplate(orderId, status, orderUrl)
+    });
+}
+
+export async function sendAbandonedCartEmail(
+    userEmail: string,
+    cartHtml: string
+) {
+    if (!resend) return;
+
+    const cartUrl = `${process.env.NEXT_PUBLIC_APP_URL}/checkout`;
+
+    await resend.emails.send({
+        from: FROM_EMAIL,
+        to: userEmail,
+        subject: `Sepetinizde ürünler bıraktınız! 🛒 - Yuvaa Store`,
+        html: getAbandonedCartTemplate(cartUrl, cartHtml)
     });
 }
