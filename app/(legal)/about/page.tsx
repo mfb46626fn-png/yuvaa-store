@@ -31,14 +31,17 @@ export default function AboutPage() {
                         Yuvaa olarak biz, seri üretimden uzak, her biri ustaların elinde şekillenen, hikayesi olan ürünlere inanıyoruz.
                     </p>
                     <p>
-                        Koleksiyonlarımızda doğallığı ve sürdürülebilirliği ön planda tutuyoruz. Ahşabın sıcaklığı, seramiğin zarafeti ve
-                        pamuğun yumuşaklığı, tasarımlarımızın ana elementlerini oluşturuyor. Bohem, İskandinav ve Minimalist tarzlardan
-                        ilham alarak oluşturduğumuz ürünlerimizle, yaşam alanlarınızı sadece dekore etmiyor, onlara bir ruh katıyoruz.
+                        Halk eğitimde başlayan kursumuzla yola çıktık ve bu serüven, zamanla birçok kişinin ekmek yemesine, geçimini sağlamasına vesile olan büyük bir dayanışmaya dönüştü.
+                        Koleksiyonlarımızda her zaman doğallığı, samimiyeti ve el emeğini ön planda tutuyoruz. Ahşabın sıcaklığı, seramiğin zarafeti ve
+                        pamuğun yumuşaklığı, tasarımlarımızın ana elementlerini oluşturuyor.
                     </p>
-                    <h3>Misyonumuz</h3>
                     <p>
-                        Yerel zanaatkarları destekleyerek, geleneksel üretim tekniklerini modern tasarımla buluşturmak ve evinizi
-                        sizin en huzurlu "yuvanız" haline getirecek parçalar sunmak.
+                        Bize uzak olan şehirlerden; özenle hazırladığımız tablolarımızı, rölyeflerimizi ve ev dekorasyon ürünlerimizi sizlerle paylaşmak,
+                        sizleri bu küçük ailemize, "yuvamıza" katmaktan büyük bir şeref duyarız.
+                    </p>
+                    <h3 className="font-bold text-2xl text-foreground">Misyonumuz</h3>
+                    <p>
+                        Yerel zanaatkarları ve el emeğini destekleyerek, geleneksel üretim tekniklerini modern tasarımla buluşturmak; her bir parçayla evinizi sizin en huzurlu "yuvanız" haline getirmek.
                     </p>
                 </div>
             </div>
