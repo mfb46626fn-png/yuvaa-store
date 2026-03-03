@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -150,6 +151,13 @@ export function AuthForm({ type }: AuthFormProps) {
                                 <FormControl>
                                     <Input type="password" placeholder="******" {...field} />
                                 </FormControl>
+                                {type === "login" && (
+                                    <div className="text-right">
+                                        <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
+                                            Şifremi Unuttum?
+                                        </Link>
+                                    </div>
+                                )}
                                 <FormMessage />
                             </FormItem>
                         )}
