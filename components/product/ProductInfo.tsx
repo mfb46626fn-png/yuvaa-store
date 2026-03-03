@@ -10,6 +10,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ProductReviews } from "./ProductReviews";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -403,6 +404,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>
+
+            {/* Product Reviews */}
+            <ProductReviews productId={product.id} />
         </div>
     );
 }

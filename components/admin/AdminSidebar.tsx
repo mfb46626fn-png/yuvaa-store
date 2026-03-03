@@ -3,7 +3,19 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { LogOut, LayoutDashboard, ShoppingBag, Package, RotateCcw, Tags, MessagesSquare, Mail, Store } from "lucide-react";
+import {
+    LogOut,
+    LayoutDashboard,
+    ShoppingBag,
+    Tags,
+    MessagesSquare,
+    MessageSquareText,
+    Users,
+    Store,
+    Mail,
+    Package,
+    RotateCcw
+} from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -35,6 +47,16 @@ const sidebarItems = [
         title: "İadeler",
         href: "/admin/returns",
         icon: RotateCcw,
+    },
+    {
+        title: "Yorum Yönetimi",
+        href: "/admin/reviews",
+        icon: MessageSquareText,
+    },
+    {
+        title: "Müşteriler",
+        href: "/admin/customers",
+        icon: Users,
     },
     {
         title: "Destek",
