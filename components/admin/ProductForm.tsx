@@ -39,6 +39,9 @@ interface ProductFormProps {
         images: string[];
         is_personalized: boolean;
         variants?: { name: string; price: number; stock: number }[];
+        material?: string;
+        dimensions?: string;
+        care_instructions?: string;
     };
 }
 
@@ -57,7 +60,10 @@ export function ProductForm({ initialData }: ProductFormProps) {
         category: initialData?.category || "",
         images: initialData?.images || [] as string[],
         is_personalized: initialData?.is_personalized || false,
-        variants: initialData?.variants || [] as { name: string; price: number; stock: number }[]
+        variants: initialData?.variants || [] as { name: string; price: number; stock: number }[],
+        material: initialData?.material || "",
+        dimensions: initialData?.dimensions || "",
+        care_instructions: initialData?.care_instructions || ""
     });
 
     useEffect(() => {
@@ -150,7 +156,10 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 category: formData.category,
                 images: formData.images,
                 is_personalized: formData.is_personalized,
-                variants: formData.variants
+                variants: formData.variants,
+                material: formData.material,
+                dimensions: formData.dimensions,
+                care_instructions: formData.care_instructions
             };
 
             if (initialData) {
@@ -235,13 +244,44 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Açıklama</Label>
+                                <Label htmlFor="description">Açıklama (Ürün Hikayesi)</Label>
                                 <Textarea
                                     id="description"
                                     placeholder="Ürün hikayesi ve detayları..."
                                     className="min-h-[150px]"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="material">Malzeme</Label>
+                                <Input
+                                    id="material"
+                                    placeholder="Örn: %100 Pamuk, Seramik, Ahşap..."
+                                    value={formData.material}
+                                    onChange={(e) => setFormData({ ...formData, material: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="dimensions">Boyutlar</Label>
+                                <Input
+                                    id="dimensions"
+                                    placeholder="Örn: 50x70 cm, Çap: 20cm..."
+                                    value={formData.dimensions}
+                                    onChange={(e) => setFormData({ ...formData, dimensions: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="care_instructions">Bakım ve Kullanım Talimatları</Label>
+                                <Textarea
+                                    id="care_instructions"
+                                    placeholder="Nemli bir bezle silin. Makinede yıkanmaz..."
+                                    className="min-h-[100px]"
+                                    value={formData.care_instructions}
+                                    onChange={(e) => setFormData({ ...formData, care_instructions: e.target.value })}
                                 />
                             </div>
                         </CardContent>

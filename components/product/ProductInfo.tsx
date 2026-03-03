@@ -38,14 +38,15 @@ interface ProductInfoProps {
         price: number;
         sale_price?: number | null;
         stock_quantity: number;
-        material: string;
-        dimensions: string;
         images: string[];
         slug: string;
         category: string;
         categories?: any;
         is_personalized?: boolean;
         variants?: { name: string; price: number; stock: number; }[];
+        material?: string;
+        dimensions?: string;
+        care_instructions?: string;
     };
 }
 
@@ -317,39 +318,54 @@ export function ProductInfo({ product }: ProductInfoProps) {
             </div>
 
             {/* Details Accordion */}
-            <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="description">
-                    <AccordionTrigger className="text-base font-medium">Ürün Açıklaması & Hikayesi</AccordionTrigger>
-                    <AccordionContent>
-                        <div className="prose prose-sm text-muted-foreground whitespace-pre-wrap">
+            <Accordion type="single" collapsible className="w-full bg-card rounded-xl border overflow-hidden shadow-sm">
+                <AccordionItem value="description" className="border-b-0">
+                    <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
+                        Ürün Açıklaması & Hikayesi
+                    </AccordionTrigger>
+                    <AccordionContent className="px-5 pb-5 pt-2">
+                        <div className="prose prose-sm text-foreground/80 whitespace-pre-wrap leading-relaxed">
                             {product.description}
                         </div>
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="details">
-                    <AccordionTrigger className="text-base font-medium">Malzeme ve Boyutlar</AccordionTrigger>
-                    <AccordionContent>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <span className="block font-semibold text-foreground mb-1">Malzeme</span>
-                                <span className="text-muted-foreground">{product.material || "Doğal Malzeme"}</span>
+                {(product.material || product.dimensions) && (
+                    <AccordionItem value="details" className="border-t border-b-0">
+                        <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
+                            Malzeme ve Boyutlar
+                        </AccordionTrigger>
+                        <AccordionContent className="px-5 pb-5 pt-2">
+                            <div className="grid grid-cols-2 gap-6 bg-muted/30 p-4 rounded-lg">
+                                {product.material && (
+                                    <div className="space-y-1.5">
+                                        <span className="block text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Malzeme</span>
+                                        <span className="text-sm font-medium text-foreground">{product.material}</span>
+                                    </div>
+                                )}
+                                {product.dimensions && (
+                                    <div className="space-y-1.5">
+                                        <span className="block text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Boyutlar</span>
+                                        <span className="text-sm font-medium text-foreground">{product.dimensions}</span>
+                                    </div>
+                                )}
                             </div>
-                            <div>
-                                <span className="block font-semibold text-foreground mb-1">Boyutlar</span>
-                                <span className="text-muted-foreground">{product.dimensions || "Standart"}</span>
+                        </AccordionContent>
+                    </AccordionItem>
+                )}
+                {product.care_instructions && (
+                    <AccordionItem value="care" className="border-t border-b-0">
+                        <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
+                            Bakım ve Kullanım
+                        </AccordionTrigger>
+                        <AccordionContent className="px-5 pb-5 pt-2">
+                            <div className="bg-primary/5 border border-primary/10 p-4 rounded-lg">
+                                <p className="text-sm text-foreground/80 leading-relaxed">
+                                    {product.care_instructions}
+                                </p>
                             </div>
-                        </div>
-                    </AccordionContent>
-                </AccordionItem>
-                <AccordionItem value="care">
-                    <AccordionTrigger className="text-base font-medium">Bakım ve Kullanım</AccordionTrigger>
-                    <AccordionContent>
-                        <p className="text-sm text-muted-foreground">
-                            Nemli bir bezle silerek temizleyiniz. Doğrudan güneş ışığından ve aşırı nemden koruyunuz.
-                            Doğal malzemeler zamanla renk değiştirebilir, bu ürünün doğallığının bir parçasıdır.
-                        </p>
-                    </AccordionContent>
-                </AccordionItem>
+                        </AccordionContent>
+                    </AccordionItem>
+                )}
             </Accordion>
         </div>
     );

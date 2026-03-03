@@ -62,14 +62,27 @@ export interface ProductFormData {
     stock_quantity: number;
     category_id: string | null;
     images: string[];
-    material: string;
-    dimensions: string;
     is_personalized: boolean;
     variants?: ProductVariant[];
+    material?: string;
+    dimensions?: string;
+    care_instructions?: string;
 }
 
 export async function createProduct(data: ProductFormData) {
     const supabase = await createServerSupabaseClient();
+
+    // Check if user is admin
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return { success: false, error: "Unauthorized" };
+
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", session.user.id)
+        .single();
+
+    if (profile?.role !== "admin") return { success: false, error: "Forbidden" };
 
     const slug = generateSlug(data.title);
 
@@ -83,11 +96,12 @@ export async function createProduct(data: ProductFormData) {
             stock_quantity: data.stock_quantity,
             category_id: data.category_id || null,
             images: data.images,
-            material: data.material,
-            dimensions: data.dimensions,
             is_personalized: data.is_personalized,
             variants: data.variants || [],
             slug,
+            material: data.material,
+            dimensions: data.dimensions,
+            care_instructions: data.care_instructions
         })
         .select()
         .single();
