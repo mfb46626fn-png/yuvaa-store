@@ -1,3 +1,5 @@
+import { SITE_CONFIG } from "@/lib/constants";
+
 export const metadata = {
     title: "Mesafeli Satış Sözleşmesi | Yuvaa Store",
 };
@@ -11,26 +13,26 @@ export default function SalesAgreementPage() {
                 <div className="prose prose-stone max-w-none text-sm text-muted-foreground space-y-6">
                     <p className="font-semibold text-foreground">MADDE 1 - KONU</p>
                     <p>
-                        İşbu sözleşmenin konusu, ALICI'nın SATICI'ya ait www.yuvaastore.com internet sitesinden elektronik ortamda siparişini yaptığı aşağıda nitelikleri ve satış fiyatı belirtilen ürünün satışı ve teslimi ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmelere Dair Yönetmelik hükümleri gereğince tarafların hak ve yükümlülüklerinin saptanmasıdır.
+                        İşbu sözleşmenin konusu, ALICI'nın SATICI'ya ait {SITE_CONFIG.contact.domain} internet sitesinden elektronik ortamda siparişini yaptığı aşağıda nitelikleri ve satış fiyatı belirtilen ürünün satışı ve teslimi ile ilgili olarak 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmelere Dair Yönetmelik hükümleri gereğince tarafların hak ve yükümlülüklerinin saptanmasıdır.
                     </p>
 
                     <p className="font-semibold text-foreground">MADDE 2 - SATICI BİLGİLERİ</p>
                     <p>
-                        Ünvanı: Yuvaa Store (Bundan sonra SATICI olarak anılacaktır)<br />
-                        Adres: Aydın, Nazilli, Türkiye<br />
-                        Telefon: 0505 254 77 86<br />
-                        E-posta: info@yuvaastore.com
+                        Ünvanı: {SITE_CONFIG.contact.companyName} (Bundan sonra SATICI olarak anılacaktır)<br />
+                        Adres: {SITE_CONFIG.contact.address}<br />
+                        Telefon: {SITE_CONFIG.contact.phone}<br />
+                        E-posta: {SITE_CONFIG.contact.email}
                     </p>
 
                     <p className="font-semibold text-foreground">MADDE 3 - ALICI BİLGİLERİ</p>
                     <p>
-                        Müşteri olarak www.yuvaastore.com sitesine üye olan veya sipariş veren kişi. (Bundan sonra ALICI olarak anılacaktır).
+                        Müşteri olarak {SITE_CONFIG.contact.domain} sitesine üye olan veya sipariş veren kişi. (Bundan sonra ALICI olarak anılacaktır).
                         Üye olurken veya sipariş verirken kullanılan adres ve iletişim bilgileri esas alınır.
                     </p>
 
                     <p className="font-semibold text-foreground">MADDE 4 - SÖZLEŞME KONUSU ÜRÜN VE TESLİMAT</p>
                     <p>
-                        4.1. Ürünlerin Cinsi ve Türü, Miktarı, Marka/Modeli, Rengi ve Tüm Vergiler Dahil Satış Bedeli www.yuvaastore.com adlı web sitesindeki ürün tanıtım sayfasında yer alan bilgilerde ve işbu sözleşmenin ayrılmaz parçası sayılan faturada belirtildiği gibidir.
+                        4.1. Ürünlerin Cinsi ve Türü, Miktarı, Marka/Modeli, Rengi ve Tüm Vergiler Dahil Satış Bedeli {SITE_CONFIG.contact.domain} adlı web sitesindeki ürün tanıtım sayfasında yer alan bilgilerde ve işbu sözleşmenin ayrılmaz parçası sayılan faturada belirtildiği gibidir.
                     </p>
                     <p>
                         4.2. Teslimat, satıcı tarafından kargo şirketi aracılığı ile alıcının yukarıda belirtilen adresine yapılacaktır. Teslimat masrafları (kargo ücreti) aksi belirtilmedikçe ALICI'ya aittir.

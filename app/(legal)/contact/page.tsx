@@ -8,6 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { createClient } from "@/lib/supabase";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export default function ContactPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,8 +78,9 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">Adres</h3>
                                     <p className="text-muted-foreground leading-relaxed">
-                                        Aydın, Nazilli<br />
-                                        Türkiye
+                                        {SITE_CONFIG.contact.address.split(',').map((part, i) => (
+                                            <span key={i}>{part.trim()}<br /></span>
+                                        ))}
                                     </p>
                                 </div>
                             </div>
@@ -90,12 +92,11 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">Telefon</h3>
-                                    <p className="text-muted-foreground mb-1">
-                                        <a href="tel:+905052547786" className="hover:text-primary transition-colors">
-                                            0505 254 77 86
+                                    <p className="text-muted-foreground">
+                                        <a href={`tel:${SITE_CONFIG.contact.phone.replace(/\s+/g, '')}`} className="hover:text-primary transition-colors">
+                                            {SITE_CONFIG.contact.phone}
                                         </a>
                                     </p>
-                                    <p className="text-xs text-muted-foreground">Hafta içi: 09:00 - 18:00</p>
                                 </div>
                             </div>
 
@@ -107,8 +108,8 @@ export default function ContactPage() {
                                 <div>
                                     <h3 className="font-semibold text-lg mb-1">E-Posta</h3>
                                     <p className="text-muted-foreground">
-                                        <a href="mailto:info@yuvaastore.com" className="hover:text-primary transition-colors">
-                                            info@yuvaastore.com
+                                        <a href={`mailto:${SITE_CONFIG.contact.email}`} className="hover:text-primary transition-colors">
+                                            {SITE_CONFIG.contact.email}
                                         </a>
                                     </p>
                                 </div>

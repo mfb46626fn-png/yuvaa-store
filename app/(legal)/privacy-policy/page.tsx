@@ -1,3 +1,5 @@
+import { SITE_CONFIG } from "@/lib/constants";
+
 export const metadata = {
     title: "Gizlilik Politikası | Yuvaa Store",
 };
@@ -10,7 +12,7 @@ export default function PrivacyPolicyPage() {
                 <p>Son Güncelleme: {new Date().toLocaleDateString('tr-TR')}</p>
 
                 <p>
-                    Yuvaa Store olarak, müşterilerimizin kişisel verilerinin güvenliğine büyük önem veriyoruz.
+                    {SITE_CONFIG.contact.companyName} olarak, müşterilerimizin kişisel verilerinin güvenliğine büyük önem veriyoruz.
                     Bu Gizlilik Politikası, web sitemizi kullandığınızda bilgilerinizin nasıl toplandığını,
                     kullanıldığını ve korunduğunu açıklar.
                 </p>
@@ -47,7 +49,7 @@ export default function PrivacyPolicyPage() {
 
                 <h3>5. İletişim</h3>
                 <p>
-                    Gizlilik politikamızla ilgili sorularınız için <a href="mailto:info@yuvaastore.com">info@yuvaastore.com</a> adresinden
+                    Gizlilik politikamızla ilgili sorularınız için <a href={`mailto:${SITE_CONFIG.contact.email}`}>{SITE_CONFIG.contact.email}</a> adresinden
                     bize ulaşabilirsiniz.
                 </p>
             </div>

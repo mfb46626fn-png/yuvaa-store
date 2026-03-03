@@ -14,5 +14,12 @@ export const SITE_CONFIG = {
             whatsapp_number: "905052547786", // Kullanıcı numarasını buraya girecek (Örn: 905321234567)
             whatsapp_message: "Merhaba, ürünleriniz hakkında bilgi almak istiyorum."
         }
+    },
+    contact: {
+        companyName: "Yuvaa Store",
+        domain: "www.yuvaastore.com",
+        email: "info@yuvaastore.com",
+        phone: "0505 254 77 86",
+        address: "Aydın, Nazilli, Türkiye"
     }
 };

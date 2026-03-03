@@ -13,15 +13,15 @@ export default function PreInformationFormPage() {
                 <div className="prose prose-stone max-w-none text-sm text-muted-foreground space-y-6">
                     <p className="font-semibold text-foreground">1. SATICI BİLGİLERİ</p>
                     <p>
-                        Ünvanı: Yuvaa Store<br />
-                        Adres: Aydın, Nazilli, Türkiye<br />
-                        Telefon: 0505 254 77 86<br />
-                        E-posta: info@yuvaastore.com
+                        Ünvanı: {SITE_CONFIG.contact.companyName}<br />
+                        Adres: {SITE_CONFIG.contact.address}<br />
+                        Telefon: {SITE_CONFIG.contact.phone}<br />
+                        E-posta: {SITE_CONFIG.contact.email}
                     </p>
 
                     <p className="font-semibold text-foreground">2. KONU</p>
                     <p>
-                        İşbu Ön Bilgilendirme Formu'nun ("Form") konusu, ALICI'nın, SATICI'ya ait www.yuvaastore.com uzantılı internet sitesinden ("İnternet Sitesi") sipariş vererek satın almak istediği, İnternet Sitesi'nde nitelikleri ve satış fiyatı belirtilen ürünlerin satışı ve teslimi ile ilgili olarak Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince bilgilendirilmesidir.
+                        İşbu Ön Bilgilendirme Formu'nun ("Form") konusu, ALICI'nın, SATICI'ya ait {SITE_CONFIG.contact.domain} uzantılı internet sitesinden ("İnternet Sitesi") sipariş vererek satın almak istediği, İnternet Sitesi'nde nitelikleri ve satış fiyatı belirtilen ürünlerin satışı ve teslimi ile ilgili olarak Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği hükümleri gereğince bilgilendirilmesidir.
                     </p>
 
                     <p className="font-semibold text-foreground">3. ÜRÜN BİLGİELERİ VE FİYAT</p>

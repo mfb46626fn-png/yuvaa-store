@@ -1,3 +1,5 @@
+import { SITE_CONFIG } from "@/lib/constants";
+
 export const metadata = {
     title: "KVKK Aydınlatma Metni | Yuvaa Store",
 };
@@ -34,7 +36,7 @@ export default function KVKKPage() {
 
                     <p className="font-semibold text-foreground">4. İlgili Kişinin KVKK m.11 Kapsamındaki Hakları</p>
                     <p>
-                        Kişisel veri sahibi olarak, Kanun’un 11. maddesinde sayılan haklarınıza (verinizin işlenip işlenmediğini öğrenme, amacına uygun kullanılıp kullanılmadığını bilme, aktarıldığı üçüncü kişileri öğrenme, eksik/yanlış işlendiyse düzeltilmesini isteme, silinmesini veya yok edilmesini talep etme vd.) sahipsiniz. Başvurularınızı info@yuvaastore.com adresine yazılı olarak veya mevzuatta öngörülen diğer yöntemlerle Şirketimize iletebilirsiniz.
+                        Kişisel veri sahibi olarak, Kanun’un 11. maddesinde sayılan haklarınıza (verinizin işlenip işlenmediğini öğrenme, amacına uygun kullanılıp kullanılmadığını bilme, aktarıldığı üçüncü kişileri öğrenme, eksik/yanlış işlendiyse düzeltilmesini isteme, silinmesini veya yok edilmesini talep etme vd.) sahipsiniz. Başvurularınızı <a href={`mailto:${SITE_CONFIG.contact.email}`}>{SITE_CONFIG.contact.email}</a> adresine yazılı olarak veya mevzuatta öngörülen diğer yöntemlerle Şirketimize iletebilirsiniz.
                     </p>
 
                     <p className="font-semibold text-foreground">Çerez (Cookie) Kullanımı ve Açık Rıza</p>

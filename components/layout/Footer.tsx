@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export function Footer() {
     const pathname = usePathname();
@@ -94,11 +95,11 @@ export function Footer() {
                     <div className="space-y-4">
                         <h4 className="font-semibold text-foreground">İletişim</h4>
                         <address className="not-italic leading-relaxed">
-                            Aydın, Nazilli<br />
-                            Türkiye
+                            {SITE_CONFIG.contact.address.split(',').map((part, i) => (
+                                <span key={i}>{part.trim()}<br /></span>
+                            ))}
                         </address>
-                        <p>info@yuvaastore.com</p>
-                        <p>+90 505 254 77 86</p>
+                        <p><a href={`mailto:${SITE_CONFIG.contact.email}`} className="hover:text-primary transition-colors">{SITE_CONFIG.contact.email}</a></p>
                     </div>
                 </div>
 
