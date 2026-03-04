@@ -220,6 +220,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 category: formData.category,
                 images: formData.images,
                 is_personalized: formData.is_personalized,
+                is_published: true,
                 variants: formData.variants,
                 material: formData.material,
                 dimensions: formData.dimensions,
