@@ -5,6 +5,8 @@ import { ProductInfo } from "@/components/product/ProductInfo";
 import { Metadata } from "next";
 import { MobileStickyBar } from "@/components/product/MobileStickyBar";
 
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
     params: Promise<{
         slug: string;
@@ -18,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const { data: product } = await supabase
         .from("products")
-        .select("title, description, images")
+        .select("title, description, short_description, seo_title, meta_description, tags, images")
         .eq("slug", slug)
         .single();
 
@@ -38,18 +40,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         .substring(0, 160)
         .trim();
 
-    const metaDescription = cleanDescription || `${product.title} detayları, fiyatı ve yorumları Yuvaa Store'da.`;
+    const seoTitle = product.seo_title || `${product.title} | Yuvaa Store`;
+    const metaDescription = product.meta_description || product.short_description || cleanDescription || `${product.title} detayları, fiyatı ve yorumları Yuvaa Store'da.`;
     const canonicalUrl = `${baseUrl}/products/${slug}`;
     const ogImage = product.images?.[0] || `${baseUrl}/images/placeholder.png`;
 
+    let keywords = [];
+    try {
+        if (product.tags) {
+            keywords = typeof product.tags === 'string' ? JSON.parse(product.tags) : product.tags;
+        }
+    } catch (e) { }
+
     return {
-        title: `${product.title} | Yuvaa Store`,
+        title: seoTitle,
         description: metaDescription,
+        keywords: keywords.length > 0 ? keywords.join(', ') : undefined,
         alternates: {
             canonical: canonicalUrl,
         },
         openGraph: {
-            title: `${product.title} | Yuvaa Store`,
+            title: seoTitle,
             description: metaDescription,
             url: canonicalUrl,
             siteName: "Yuvaa Store",
@@ -66,7 +77,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         },
         twitter: {
             card: "summary_large_image",
-            title: `${product.title} | Yuvaa Store`,
+            title: seoTitle,
             description: metaDescription,
             images: [ogImage],
         }

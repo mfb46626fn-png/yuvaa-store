@@ -1,8 +1,8 @@
 import { MetadataRoute } from "next";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { createStaticSupabaseClient } from "@/lib/supabase-static";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const supabase = await createServerSupabaseClient();
+    const supabase = createStaticSupabaseClient();
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://yuvaa-store.vercel.app";
 
     // Static Base Routes

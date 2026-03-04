@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
     params: Promise<{
         slug: string;

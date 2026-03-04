@@ -46,6 +46,10 @@ interface ProductFormProps {
         tone?: string;
         has_frame?: boolean;
         size_category?: string;
+        short_description?: string;
+        seo_title?: string;
+        meta_description?: string;
+        tags?: string;
     };
 }
 
@@ -67,11 +71,31 @@ export function ProductForm({ initialData }: ProductFormProps) {
         variants: initialData?.variants || [] as { name: string; price: number; stock: number }[],
         material: initialData?.material || "",
         dimensions: initialData?.dimensions || "",
-        care_instructions: initialData?.care_instructions || "",
+        care_instructions: initialData?.care_instructions || "[]",
         orientation: initialData?.orientation || "",
         tone: initialData?.tone || "",
         has_frame: initialData?.has_frame || false,
         size_category: initialData?.size_category || "",
+        short_description: initialData?.short_description || "",
+        seo_title: initialData?.seo_title || "",
+        meta_description: initialData?.meta_description || "",
+        tags: initialData?.tags || "[]",
+    });
+
+    const [careInstructionsList, setCareInstructionsList] = useState<string[]>(() => {
+        try {
+            return JSON.parse(initialData?.care_instructions || "[]");
+        } catch {
+            return initialData?.care_instructions ? [initialData.care_instructions] : [];
+        }
+    });
+
+    const [tagsList, setTagsList] = useState<string[]>(() => {
+        try {
+            return JSON.parse(initialData?.tags || "[]");
+        } catch {
+            return [];
+        }
     });
 
     useEffect(() => {
@@ -112,14 +136,14 @@ export function ProductForm({ initialData }: ProductFormProps) {
         }
     };
 
-    const handleImageUpload = (url: string) => {
-        setFormData(prev => ({ ...prev, images: [...prev.images, url] }));
+    const handleImageUpload = (urls: string[]) => {
+        setFormData(prev => ({ ...prev, images: urls }));
     };
 
-    const handleRemoveImage = (indexToRemove: number) => {
+    const handleRemoveImage = (urlToRemove: string) => {
         setFormData(prev => ({
             ...prev,
-            images: prev.images.filter((_, index) => index !== indexToRemove)
+            images: prev.images.filter((url) => url !== urlToRemove)
         }));
     };
 
@@ -145,24 +169,35 @@ export function ProductForm({ initialData }: ProductFormProps) {
         });
     };
 
-    const TEMPLATE_TEXT = `**Malzeme:** 
+    const handleAddCareInstruction = () => {
+        setCareInstructionsList(prev => [...prev, ""]);
+    };
 
-**Asma Aparatı:** 
+    const handleCareInstructionChange = (index: number, value: string) => {
+        setCareInstructionsList(prev => {
+            const newList = [...prev];
+            newList[index] = value;
+            return newList;
+        });
+    };
 
-**Paketleme:** 
+    const handleRemoveCareInstruction = (index: number) => {
+        setCareInstructionsList(prev => prev.filter((_, i) => i !== index));
+    };
 
-**Teslim Süresi:** 
-
-**Renk Farkı Uyarısı:** Ahşap/doğal malzemelerin yapısı gereği ürün renklerinde ve dokusunda ufak farklılıklar olabilir.
-
-**Ölçü Politikası:** El yapımı ürünlerimizde +/- 1-2 cm ölçü farklılığı görülebilir.`;
-
-    const handleInsertTemplate = () => {
-        if (!formData.description) {
-            setFormData(prev => ({ ...prev, description: TEMPLATE_TEXT }));
-        } else {
-            setFormData(prev => ({ ...prev, description: prev.description + "\n\n" + TEMPLATE_TEXT }));
+    const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const value = e.currentTarget.value.trim();
+            if (value && !tagsList.includes(value)) {
+                setTagsList(prev => [...prev, value]);
+            }
+            e.currentTarget.value = "";
         }
+    };
+
+    const handleRemoveTag = (tagToRemove: string) => {
+        setTagsList(prev => prev.filter(tag => tag !== tagToRemove));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -175,25 +210,11 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 return;
             }
 
-            // Standard Content Verification
-            const requiredKeywords = ["malzeme", "asma aparat", "paketleme", "teslim", "renk farkı", "ölçü"];
-            const descLower = formData.description.toLowerCase();
-            const missingKeywords = requiredKeywords.filter(kw => !descLower.includes(kw));
-
-            if (missingKeywords.length > 0) {
-                // If they missed some standard template parts, ask them to make sure or confirm
-                toast.warning(`Dikkat: Açıklamada önerilen şablon başlıkları eksik (${missingKeywords.join(', ')}).`);
-                // We won't strictly block saving, just warn them so they know. 
-                // Alternatively, we could block it if the user strictly demanded "zorunlu" (mandatory).
-                // Let's enforce it strictly based on the user's "zorunlu hale getirilecek" prompt:
-                toast.error("Ürün açıklaması standart şablona uymak zorundadır. Lütfen 'Şablon Ekle' butonunu kullanın.");
-                return;
-            }
-
             const payload = {
                 title: formData.title,
                 slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, "-"),
                 description: formData.description,
+                short_description: formData.short_description,
                 price: parseFloat(formData.price),
                 inventory: parseInt(formData.inventory) || 0,
                 category: formData.category,
@@ -202,11 +223,14 @@ export function ProductForm({ initialData }: ProductFormProps) {
                 variants: formData.variants,
                 material: formData.material,
                 dimensions: formData.dimensions,
-                care_instructions: formData.care_instructions,
+                care_instructions: JSON.stringify(careInstructionsList),
                 orientation: formData.orientation,
                 tone: formData.tone,
                 has_frame: formData.has_frame,
-                size_category: formData.size_category
+                size_category: formData.size_category,
+                seo_title: formData.seo_title,
+                meta_description: formData.meta_description,
+                tags: JSON.stringify(tagsList)
             };
 
             if (initialData) {
@@ -291,16 +315,21 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label htmlFor="description">Açıklama (Ürün Hikayesi) *</Label>
-                                    <Button type="button" variant="outline" size="sm" onClick={handleInsertTemplate}>
-                                        Şablon Ekle
-                                    </Button>
-                                </div>
-                                <p className="text-xs text-muted-foreground mb-2">Standart şablonu kullanmak zorunludur.</p>
+                                <Label htmlFor="short_description">Kısa Açıklama</Label>
+                                <Textarea
+                                    id="short_description"
+                                    placeholder="Ürün sayfasının başında görünecek özet bilgi..."
+                                    className="min-h-[80px]"
+                                    value={formData.short_description}
+                                    onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Uzun Açıklama (Ürün Hikayesi) *</Label>
                                 <Textarea
                                     id="description"
-                                    placeholder="Ürün hikayesi ve detayları..."
+                                    placeholder="Detaylı ürün hikayesi ve açıklamalar..."
                                     className="min-h-[200px]"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -329,14 +358,34 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="care_instructions">Bakım ve Kullanım Talimatları</Label>
-                                <Textarea
-                                    id="care_instructions"
-                                    placeholder="Nemli bir bezle silin. Makinede yıkanmaz..."
-                                    className="min-h-[100px]"
-                                    value={formData.care_instructions}
-                                    onChange={(e) => setFormData({ ...formData, care_instructions: e.target.value })}
-                                />
+                                <div className="flex items-center justify-between">
+                                    <Label>Bakım ve Kullanım Talimatları</Label>
+                                    <Button type="button" variant="outline" size="sm" onClick={handleAddCareInstruction}>
+                                        <Plus className="h-4 w-4 mr-2" /> Madde Ekle
+                                    </Button>
+                                </div>
+                                <div className="space-y-2">
+                                    {careInstructionsList.map((instruction, index) => (
+                                        <div key={index} className="flex items-center gap-2">
+                                            <Input
+                                                value={instruction}
+                                                onChange={(e) => handleCareInstructionChange(index, e.target.value)}
+                                                placeholder="Örn: Nemli bir bezle silin."
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleRemoveCareInstruction(index)}
+                                            >
+                                                <X className="h-4 w-4 text-destructive" />
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    {careInstructionsList.length === 0 && (
+                                        <p className="text-sm text-muted-foreground italic">Henüz bir madde eklenmedi.</p>
+                                    )}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -344,46 +393,16 @@ export function ProductForm({ initialData }: ProductFormProps) {
                     <Card>
                         <CardHeader>
                             <CardTitle>Medya</CardTitle>
-                            <CardDescription>Ürün görsellerini yükleyin (En az 1 adet). *</CardDescription>
+                            <CardDescription>Ürün görsellerini yükleyin. (En az 1 adet). *</CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
-                                {/* Main Uploader */}
-                                <div className="grid gap-4">
-                                    <ImageUpload
-                                        value=""
-                                        onChange={handleImageUpload}
-                                        onRemove={() => { }}
-                                        bucketName="products"
-                                    />
-                                </div>
-
-                                {/* Preview Grid */}
-                                {formData.images.length > 0 && (
-                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 mt-4">
-                                        {formData.images.map((img, index) => (
-                                            <div key={index} className="relative aspect-square group rounded-lg overflow-hidden border bg-muted">
-                                                <img
-                                                    src={img}
-                                                    alt={`Upload ${index}`}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveImage(index)}
-                                                    className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    <X className="h-3 w-3" />
-                                                </button>
-                                                {index === 0 && (
-                                                    <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] text-center py-1">
-                                                        Ana Görsel
-                                                    </span>
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
+                                <ImageUpload
+                                    value={formData.images}
+                                    onChange={handleImageUpload}
+                                    onRemove={handleRemoveImage}
+                                    bucketName="products"
+                                />
                             </div>
                         </CardContent>
                     </Card>
@@ -414,24 +433,23 @@ export function ProductForm({ initialData }: ProductFormProps) {
                                     </SelectContent>
                                 </Select>
                             </div>
-
-                            <div className="space-y-2">
-                                <Label>Boyut Sınıflandırması</Label>
-                                <Select
-                                    value={formData.size_category}
-                                    onValueChange={(val) => setFormData({ ...formData, size_category: val })}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Belirtilmemiş" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="none">Belirtilmemiş</SelectItem>
-                                        <SelectItem value="Küçük">Küçük</SelectItem>
-                                        <SelectItem value="Orta">Orta</SelectItem>
-                                        <SelectItem value="Büyük">Büyük</SelectItem>
-                                        <SelectItem value="Özel Ölçü">Özel Ölçü</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            {/* Dimensions Selection */}
+                            <div className="space-y-4 pt-4 border-t">
+                                <Label className="text-base">Boyutlandırma</Label>
+                                <div className="space-y-2">
+                                    <Label className="text-xs text-muted-foreground">Katalog Boyutu Kategorisi</Label>
+                                    <Select value={formData.size_category} onValueChange={(v) => setFormData({ ...formData, size_category: v })}>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Boyut Sınıfı Seçin" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Küçük Özel Yapım">Küçük Özel Yapım (Örn: 20x20 cm)</SelectItem>
+                                            <SelectItem value="Standart Orta">Standart Orta (Örn: 40x50 cm)</SelectItem>
+                                            <SelectItem value="Geniş Format">Geniş Format (Örn: 50x70 cm)</SelectItem>
+                                            <SelectItem value="Dev Boyut (Statement)">Dev Boyut Statement (Örn: 100x100 cm+)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
@@ -458,11 +476,11 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Kategori & Stok</CardTitle>
+                            <CardTitle>Kategori</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <Label>Kategori</Label>
+                                <Label>Kategori Seçimi *</Label>
                                 <Select
                                     value={formData.category}
                                     onValueChange={(val) => setFormData({ ...formData, category: val })}
@@ -578,8 +596,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             {isLoading ? "Kaydediliyor..." : (initialData ? "Güncelle" : "Ürünü Yayınla")}
                         </Button>
                     </div>
-                </div >
-            </form >
-        </div >
+                </div>
+            </form>
+        </div>
     );
 }

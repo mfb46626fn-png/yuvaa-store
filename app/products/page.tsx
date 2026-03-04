@@ -2,6 +2,8 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: "Tüm Ürünler | Yuvaa Store",
     description: "Yuvaa Store'un eşsiz ev dekorasyon koleksiyonunu keşfedin.",

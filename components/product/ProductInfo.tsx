@@ -47,6 +47,7 @@ interface ProductInfoProps {
         material?: string;
         dimensions?: string;
         care_instructions?: string;
+        short_description?: string;
     };
 }
 
@@ -181,9 +182,15 @@ export function ProductInfo({ product }: ProductInfoProps) {
             </div>
 
             {/* Short Description */}
-            <p className="text-muted-foreground text-lg leading-relaxed line-clamp-3">
-                {product.description}
-            </p>
+            {product.short_description ? (
+                <p className="text-muted-foreground text-lg leading-relaxed">
+                    {product.short_description}
+                </p>
+            ) : (
+                <p className="text-muted-foreground text-lg leading-relaxed line-clamp-3">
+                    {product.description}
+                </p>
+            )}
 
             {/* Options / Variants */}
             {product.variants && product.variants.length > 0 && (
@@ -368,13 +375,26 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 {product.care_instructions && (
                     <AccordionItem value="care" className="border-t border-b-0">
                         <AccordionTrigger className="text-base font-semibold px-5 hover:bg-muted/50 transition-colors">
-                            Bakım ve Kullanım
+                            Bakım ve Kullanım Üzerine
                         </AccordionTrigger>
                         <AccordionContent className="px-5 pb-5 pt-2">
                             <div className="bg-primary/5 border border-primary/10 p-4 rounded-lg">
-                                <p className="text-sm text-foreground/80 leading-relaxed">
-                                    {product.care_instructions}
-                                </p>
+                                <ul className="list-disc list-inside space-y-2 text-sm text-foreground/80 leading-relaxed">
+                                    {(() => {
+                                        try {
+                                            const items = JSON.parse(product.care_instructions);
+                                            if (Array.isArray(items) && items.length > 0) {
+                                                return items.map((item, i) => (
+                                                    <li key={i}>{item}</li>
+                                                ));
+                                            }
+                                        } catch (e) {
+                                            // Fallback for old string format
+                                            return <li>{product.care_instructions}</li>;
+                                        }
+                                        return <li>{product.care_instructions}</li>;
+                                    })()}
+                                </ul>
                             </div>
                         </AccordionContent>
                     </AccordionItem>
