@@ -57,7 +57,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         .from("products")
         .select("*")
         .eq("category", slug)
-        .eq("is_active", true); // Only active ones
+        .eq("is_published", true); // Only published ones
 
     // Apply Filters from URL
     const orientation = resolvedSearchParams.orientation as string;
@@ -85,7 +85,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         .from("products")
         .select("orientation, tone, size_category")
         .eq("category", slug)
-        .eq("is_active", true);
+        .eq("is_published", true);
 
     const availableFilters = {
         orientations: Array.from(new Set((allCategoryProducts || []).map(p => p.orientation).filter(Boolean))),

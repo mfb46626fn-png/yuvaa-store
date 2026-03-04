@@ -18,7 +18,7 @@ export async function GET() {
                 sale_price,
                 images
             `)
-            .eq('is_active', true);
+            .eq('is_published', true);
 
         if (error) {
             console.error("Supabase search fetch error:", error);
