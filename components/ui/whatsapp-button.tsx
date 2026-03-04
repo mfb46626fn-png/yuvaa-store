@@ -3,16 +3,19 @@
 import { MessageCircle } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export function WhatsAppButton() {
     const [isVisible, setIsVisible] = useState(false);
+    const pathname = usePathname();
 
     // Show button after a small delay or instantly
     useEffect(() => {
         setIsVisible(true);
     }, []);
 
-    if (!isVisible) return null;
+    // Hide on admin pages
+    if (!isVisible || pathname.startsWith("/admin")) return null;
 
     const { whatsapp_number, whatsapp_message } = SITE_CONFIG.footer.socials;
 
