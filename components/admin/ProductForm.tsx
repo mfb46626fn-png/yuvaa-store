@@ -437,18 +437,12 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             <div className="space-y-4 pt-4 border-t">
                                 <Label className="text-base">Boyutlandırma</Label>
                                 <div className="space-y-2">
-                                    <Label className="text-xs text-muted-foreground">Katalog Boyutu Kategorisi</Label>
-                                    <Select value={formData.size_category} onValueChange={(v) => setFormData({ ...formData, size_category: v })}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Boyut Sınıfı Seçin" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Küçük Özel Yapım">Küçük Özel Yapım (Örn: 20x20 cm)</SelectItem>
-                                            <SelectItem value="Standart Orta">Standart Orta (Örn: 40x50 cm)</SelectItem>
-                                            <SelectItem value="Geniş Format">Geniş Format (Örn: 50x70 cm)</SelectItem>
-                                            <SelectItem value="Dev Boyut (Statement)">Dev Boyut Statement (Örn: 100x100 cm+)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <Label className="text-xs text-muted-foreground">Boyut Kategorisi</Label>
+                                    <Input
+                                        placeholder="Örn: 50x70 cm, Küçük, Standart Orta..."
+                                        value={formData.size_category}
+                                        onChange={(e) => setFormData({ ...formData, size_category: e.target.value })}
+                                    />
                                 </div>
                             </div>
 
