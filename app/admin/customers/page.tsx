@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
 import {
     Table,
     TableBody,
@@ -31,7 +30,6 @@ export default function AdminCustomersPage() {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState("");
-    const [supabase] = useState(() => createClient());
 
     useEffect(() => {
         fetchCustomers();
@@ -40,39 +38,12 @@ export default function AdminCustomersPage() {
     const fetchCustomers = async () => {
         setIsLoading(true);
         try {
-            // Fetch profiles
-            const { data: profiles, error: profilesError } = await supabase
-                .from("profiles")
-                .select("id, email, full_name, phone, created_at")
-                .order("created_at", { ascending: false });
-
-            if (profilesError) throw profilesError;
-
-            // Fetch order summaries per user
-            const { data: orders, error: ordersError } = await supabase
-                .from("orders")
-                .select("user_id, total");
-
-            if (ordersError) throw ordersError;
-
-            // Aggregate orders per user
-            const orderMap = new Map<string, { count: number; total: number }>();
-            (orders || []).forEach((order) => {
-                if (!order.user_id) return;
-                const existing = orderMap.get(order.user_id) || { count: 0, total: 0 };
-                orderMap.set(order.user_id, {
-                    count: existing.count + 1,
-                    total: existing.total + (order.total || 0),
-                });
-            });
-
-            const enrichedCustomers: Customer[] = (profiles || []).map((profile) => ({
-                ...profile,
-                order_count: orderMap.get(profile.id)?.count || 0,
-                total_spent: orderMap.get(profile.id)?.total || 0,
-            }));
-
-            setCustomers(enrichedCustomers);
+            const res = await fetch("/api/admin/customers");
+            if (!res.ok) {
+                throw new Error(`Sunucu hatası: ${res.status}`);
+            }
+            const data = await res.json();
+            setCustomers(data);
         } catch (error) {
             console.error("Customers fetch error:", error);
             toast.error("Müşteriler yüklenemedi.");
