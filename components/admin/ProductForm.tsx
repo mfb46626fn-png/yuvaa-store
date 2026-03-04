@@ -145,6 +145,26 @@ export function ProductForm({ initialData }: ProductFormProps) {
         });
     };
 
+    const TEMPLATE_TEXT = `**Malzeme:** 
+
+**Asma Aparatı:** 
+
+**Paketleme:** 
+
+**Teslim Süresi:** 
+
+**Renk Farkı Uyarısı:** Ahşap/doğal malzemelerin yapısı gereği ürün renklerinde ve dokusunda ufak farklılıklar olabilir.
+
+**Ölçü Politikası:** El yapımı ürünlerimizde +/- 1-2 cm ölçü farklılığı görülebilir.`;
+
+    const handleInsertTemplate = () => {
+        if (!formData.description) {
+            setFormData(prev => ({ ...prev, description: TEMPLATE_TEXT }));
+        } else {
+            setFormData(prev => ({ ...prev, description: prev.description + "\n\n" + TEMPLATE_TEXT }));
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -152,6 +172,21 @@ export function ProductForm({ initialData }: ProductFormProps) {
         try {
             if (!formData.title || !formData.price || !formData.images.length) {
                 toast.error("Lütfen zorunlu alanları doldurun (Başlık, Fiyat, Görsel).");
+                return;
+            }
+
+            // Standard Content Verification
+            const requiredKeywords = ["malzeme", "asma aparat", "paketleme", "teslim", "renk farkı", "ölçü"];
+            const descLower = formData.description.toLowerCase();
+            const missingKeywords = requiredKeywords.filter(kw => !descLower.includes(kw));
+
+            if (missingKeywords.length > 0) {
+                // If they missed some standard template parts, ask them to make sure or confirm
+                toast.warning(`Dikkat: Açıklamada önerilen şablon başlıkları eksik (${missingKeywords.join(', ')}).`);
+                // We won't strictly block saving, just warn them so they know. 
+                // Alternatively, we could block it if the user strictly demanded "zorunlu" (mandatory).
+                // Let's enforce it strictly based on the user's "zorunlu hale getirilecek" prompt:
+                toast.error("Ürün açıklaması standart şablona uymak zorundadır. Lütfen 'Şablon Ekle' butonunu kullanın.");
                 return;
             }
 
@@ -256,13 +291,20 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="description">Açıklama (Ürün Hikayesi)</Label>
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="description">Açıklama (Ürün Hikayesi) *</Label>
+                                    <Button type="button" variant="outline" size="sm" onClick={handleInsertTemplate}>
+                                        Şablon Ekle
+                                    </Button>
+                                </div>
+                                <p className="text-xs text-muted-foreground mb-2">Standart şablonu kullanmak zorunludur.</p>
                                 <Textarea
                                     id="description"
                                     placeholder="Ürün hikayesi ve detayları..."
-                                    className="min-h-[150px]"
+                                    className="min-h-[200px]"
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    required
                                 />
                             </div>
 
@@ -536,8 +578,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
                             {isLoading ? "Kaydediliyor..." : (initialData ? "Güncelle" : "Ürünü Yayınla")}
                         </Button>
                     </div>
-                </div>
-            </form>
-        </div>
+                </div >
+            </form >
+        </div >
     );
 }
