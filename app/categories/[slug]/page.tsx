@@ -2,6 +2,7 @@ import { createServerSupabaseClient } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Metadata } from "next";
+import { CategorySorter } from "@/components/category/CategoryFilters";
 
 export const dynamic = 'force-dynamic';
 
@@ -34,8 +35,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-import { CategoryFilters } from "@/components/category/CategoryFilters";
-
 export default async function CategoryPage({ params, searchParams }: PageProps) {
     const { slug } = await params;
     const resolvedSearchParams = await searchParams;
@@ -52,44 +51,24 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         notFound();
     }
 
-    // 2. Build Products Query
-    let query = supabase
-        .from("products")
-        .select("*")
-        .eq("category", slug);
+    // 2. Build Products Query with sorting
+    const sort = resolvedSearchParams.sort as string;
+    let orderColumn = "created_at";
+    let ascending = false;
 
-    // Apply Filters from URL
-    const orientation = resolvedSearchParams.orientation as string;
-    if (orientation) query = query.in("orientation", orientation.split(','));
-
-    const size = resolvedSearchParams.size as string;
-    if (size) query = query.in("size_category", size.split(','));
-
-    const tone = resolvedSearchParams.tone as string;
-    if (tone) query = query.in("tone", tone.split(','));
-
-    const frame = resolvedSearchParams.frame as string;
-    if (frame) {
-        // Handle boolean parsing. If URL has 'true,false', ignore filtering.
-        const frames = frame.split(',');
-        if (frames.length === 1) {
-            query = query.eq("has_frame", frames[0] === 'true');
-        }
+    if (sort === "price_asc") {
+        orderColumn = "price";
+        ascending = true;
+    } else if (sort === "price_desc") {
+        orderColumn = "price";
+        ascending = false;
     }
 
-    const { data: products } = await query.order("created_at", { ascending: false });
-
-    // 3. Extract unique available filters for this category's ACTIVE products
-    const { data: allCategoryProducts } = await supabase
+    const { data: products } = await supabase
         .from("products")
-        .select("orientation, tone, size_category")
-        .eq("category", slug);
-
-    const availableFilters = {
-        orientations: Array.from(new Set((allCategoryProducts || []).map(p => p.orientation).filter(Boolean))),
-        tones: Array.from(new Set((allCategoryProducts || []).map(p => p.tone).filter(Boolean))),
-        sizeCategories: Array.from(new Set((allCategoryProducts || []).map(p => p.size_category).filter(Boolean))),
-    };
+        .select("*")
+        .eq("category", slug)
+        .order(orderColumn, { ascending });
 
     // Format products for ProductCard
     const formattedProducts = (products || []).map(p => ({
@@ -104,7 +83,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         <div className="bg-background min-h-screen pb-20 pt-10">
             <div className="container mx-auto px-4">
                 {/* Header */}
-                <div className="mb-12 text-center">
+                <div className="mb-8 text-center">
                     <span className="text-sm font-medium text-primary uppercase tracking-wider">
                         Koleksiyon
                     </span>
@@ -113,33 +92,31 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                     </h1>
                 </div>
 
-                {/* Main Content Layout */}
-                <div className="flex flex-col lg:flex-row items-start relative">
-                    <CategoryFilters availableFilters={availableFilters} />
-
-                    <div className="flex-1 w-full">
-                        {/* Product Grid */}
-                        {formattedProducts.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-                                {formattedProducts.map((product) => (
-                                    <ProductCard
-                                        key={product.id}
-                                        product={product}
-                                    />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="flex flex-col items-center justify-center py-20 text-center border rounded-lg border-dashed">
-                                <p className="text-lg text-muted-foreground">
-                                    Arama kriterlerinize uygun ürün bulunamadı.
-                                </p>
-                                <p className="text-sm text-muted-foreground mt-2">
-                                    Filtreleri temizleyerek daha fazla ürüne ulaşabilirsiniz.
-                                </p>
-                            </div>
-                        )}
-                    </div>
+                {/* Sort Bar */}
+                <div className="flex items-center justify-between mb-8 pb-4 border-b">
+                    <p className="text-sm text-muted-foreground">
+                        {formattedProducts.length} ürün
+                    </p>
+                    <CategorySorter />
                 </div>
+
+                {/* Product Grid */}
+                {formattedProducts.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+                        {formattedProducts.map((product) => (
+                            <ProductCard
+                                key={product.id}
+                                product={product}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center py-20 text-center border rounded-lg border-dashed">
+                        <p className="text-lg text-muted-foreground">
+                            Bu kategoride henüz ürün bulunmuyor.
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
