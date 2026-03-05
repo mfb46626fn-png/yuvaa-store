@@ -18,7 +18,7 @@ interface SearchProduct {
     slug: string;
     description: string;
     category: string;
-    base_price: number;
+    price: number;
     sale_price: number | null;
     images: string[];
 }
@@ -154,11 +154,11 @@ export function GlobalSearch({ triggerButton }: { triggerButton?: React.ReactNod
                                     <div className="flex items-center text-sm">
                                         {product.sale_price ? (
                                             <div className="flex items-center gap-2">
-                                                <span className="text-muted-foreground line-through text-xs">₺{product.base_price.toLocaleString("tr-TR")}</span>
+                                                <span className="text-muted-foreground line-through text-xs">₺{product.price.toLocaleString("tr-TR")}</span>
                                                 <span className="font-semibold text-primary">₺{product.sale_price.toLocaleString("tr-TR")}</span>
                                             </div>
                                         ) : (
-                                            <span className="font-semibold">₺{product.base_price.toLocaleString("tr-TR")}</span>
+                                            <span className="font-semibold">₺{product.price.toLocaleString("tr-TR")}</span>
                                         )}
                                     </div>
                                 </button>

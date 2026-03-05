@@ -14,7 +14,7 @@ export async function GET() {
                 slug,
                 description,
                 category,
-                base_price,
+                price,
                 sale_price,
                 images
             `);
